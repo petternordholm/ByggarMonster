@@ -1,24 +1,26 @@
 package se.byggarmonster.lib;
 
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CommonToken;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.tree.ParseTree;
 
+import se.byggarmonster.lib.impl.simple.SimpleBuilder;
 import se.byggarmonster.lib.parser.JavaLexer;
 import se.byggarmonster.lib.parser.JavaParser;
+import se.byggarmonster.lib.parser.JavaParser.CompilationUnitContext;
 
 public class ByggarMonsterAPI {
-	private final String builder;
+	private final String builderName;
 	private final String source;
 
 	public ByggarMonsterAPI(final String source, final String builder) {
 		this.source = source;
-		this.builder = builder;
+		this.builderName = builder;
 	}
 
 	public String getBuilder() {
-		return builder;
+		return builderName;
 	}
 
 	public String getSource() {
@@ -27,25 +29,28 @@ public class ByggarMonsterAPI {
 
 	@Override
 	public String toString() {
-		String builderCode = "";
-		final ANTLRStringStream stringStream = new ANTLRStringStream(source);
-		final JavaLexer lexer = new JavaLexer(stringStream);
-		final CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
+		final String builderCode = "";
+		final JavaLexer lexer = new JavaLexer(new ANTLRInputStream(source));
+		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final JavaParser parser = new JavaParser(tokens);
 		try {
-			parser.compilationUnit();
-			// TODO: How to use the parser??
+			final CompilationUnitContext cu = parser.compilationUnit();
+			if (builderName.equalsIgnoreCase("simple")) {
+				final SimpleBuilder builderInstance = new SimpleBuilder();
+				traverse(cu, builderInstance);
+				return builderInstance.toString();
+			}
+			throw new RuntimeException("Builder " + builderName
+					+ " not supported.");
 		} catch (final RecognitionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		for (final Object objCommonToken : tokens.getTokens()) {
-			final CommonToken commonToken = (CommonToken) objCommonToken;
-			if (commonToken.getType() == JavaParser.PACKAGE) {
-				builderCode += commonToken.getText();
-			}
-		}
 		return builderCode;
+	}
+
+	private void traverse(final ParseTree parseTree, final SimpleBuilder builder) {
+		builder.visit(parseTree);
+		for (int i = 0; i < parseTree.getChildCount(); i++)
+			traverse(parseTree.getChild(i), builder);
 	}
 }

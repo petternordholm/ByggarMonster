@@ -22,11 +22,11 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
 	  <version>14.0.1</version>
     </dependency>
     <dependency>
-	  <groupId>org.antlr</groupId>
-	  <artifactId>antlr-runtime</artifactId>
-	  <version>3.0.1</version>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr4-runtime</artifactId>
+      <version>4.0</version>
       <scope>compile</scope>
-    </dependency>
+     </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -64,13 +64,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>antlr3-maven-plugin</artifactId>
-        <version>1.0</version>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-maven-plugin</artifactId>
+        <version>4.0</version>
         <executions>
           <execution>
             <goals>
-              <goal>antlr</goal>
+              <goal>antlr4</goal>
             </goals>
           </execution>
         </executions>
