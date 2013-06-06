@@ -1,6 +1,6 @@
 package se.byggarmonster.test;
 
-public class stringHolderAsserted {
+public class stringHolderSrcBuilder {
 	private final String fail = "not implemented!";
 
 	public String getFail() {

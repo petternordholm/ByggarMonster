@@ -1,10 +1,10 @@
 package se.byggarmonster.test;
 
-public class stringHolderSrc {
+public class StringHolderSrc {
 	private final int myInt;
 	private final String myString;
 
-	public stringHolderSrc(final String myStringConstrParam,
+	public StringHolderSrc(final String myStringConstrParam,
 			final int theOtherConstructorParam) {
 		this.myString = myStringConstrParam;
 		this.myInt = theOtherConstructorParam;

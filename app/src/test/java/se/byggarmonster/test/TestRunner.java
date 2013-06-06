@@ -19,7 +19,7 @@ import com.google.common.io.Files;
  * Will create builders for all data types found in src/test/resources.
  */
 public class TestRunner {
-	private static final String ASSERTED_JAVA = "Asserted.java";
+	private static final String ASSERTED_JAVA = "SrcBuilder.java";
 	private static final String SRC_JAVA = "Src.java";
 	private static final String SRC_TEST_RESOURCES = "src/resources";
 

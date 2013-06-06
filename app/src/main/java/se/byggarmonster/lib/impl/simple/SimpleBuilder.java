@@ -7,10 +7,12 @@ import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaParser.FieldDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
 import se.byggarmonster.lib.parser.JavaParser.MemberDeclarationContext;
+import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 import se.byggarmonster.lib.parser.JavaParser.VariableDeclaratorContext;
 
 public class SimpleBuilder extends JavaBaseListener {
+	private String className;
 	/**
 	 * Name => Type
 	 */
@@ -48,6 +50,12 @@ public class SimpleBuilder extends JavaBaseListener {
 						.getText());
 	}
 
+	@Override
+	public void exitNormalClassDeclaration(
+			final NormalClassDeclarationContext ctx) {
+		this.className = ctx.Identifier().getText();
+	}
+
 	/**
 	 * package name
 	 */
@@ -60,6 +68,7 @@ public class SimpleBuilder extends JavaBaseListener {
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append("package " + packageName + ";\n");
+		sb.append("className " + className + "\n");
 
 		sb.append("Constructor parameters:\n");
 		for (final String name : constructorParameters.keySet())
