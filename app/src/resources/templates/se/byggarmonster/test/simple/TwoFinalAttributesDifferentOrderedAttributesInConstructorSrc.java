@@ -5,8 +5,8 @@ public class TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc {
 	private final String myString;
 
 	public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc(
-	        final String myString, final int myInt) {
-		this.myString = myString;
+	        final String myStringC, final int myInt) {
+		myString = myStringC;
 		this.myInt = myInt;
 	}
 
