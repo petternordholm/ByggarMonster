@@ -4,8 +4,8 @@ public class TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder
     private int myInt;
     private String myString;
 
-    public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc build() {
-        return new TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc(myString, myInt);
+    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc build() {
+        return new TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc(myString, myInt);
     }
 
     public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withmyInt(final int myInt) {
