@@ -12,6 +12,7 @@ public class SimpleBuilder extends JavaBaseListener {
 	 * Name => Type
 	 */
 	private final Map<String, String> constructorParameters;
+	private String packageName;
 
 	public SimpleBuilder() {
 		constructorParameters = new HashMap<String, String>();
@@ -31,16 +32,17 @@ public class SimpleBuilder extends JavaBaseListener {
 	}
 
 	/**
-	 * package name, class attribute
+	 * package name
 	 */
 	@Override
 	public void exitQualifiedName(final QualifiedNameContext ctx) {
-		System.out.println("exiting exitQualifiedName " + ctx.getText());
+		this.packageName = ctx.getText();
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
+		sb.append("package " + packageName + ";\n");
 		for (final String name : constructorParameters.keySet())
 			sb.append(" " + name + "(" + constructorParameters.get(name) + ")");
 		return sb.toString();
