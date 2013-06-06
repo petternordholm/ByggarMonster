@@ -10,6 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.io.Files;
 
 public class TemplateHelper {
@@ -35,8 +36,11 @@ public class TemplateHelper {
 		while (m.find()) {
 			final String regionString = m.group(0);
 			final String variableName = m.group(1);
-			final String betweenValue = m.group(2).substring(0,
-			        m.group(2).length() - 1);
+			Optional<String> betweenValue = Optional.fromNullable(m.group(2));
+			if (betweenValue.isPresent()) {
+				betweenValue = Optional.of(betweenValue.get().substring(0,
+				        m.group(2).length() - 1));
+			}
 			final String templateBlock = m.group(3);
 			final List<Object> members = ((List<Object>) context
 			        .get(variableName));
@@ -44,7 +48,7 @@ public class TemplateHelper {
 			final StringBuilder renderedBlock = new StringBuilder();
 			boolean isFirst = true;
 			for (final Object member : members) {
-				renderedBlock.append((isFirst ? "" : betweenValue)
+				renderedBlock.append((isFirst ? "" : betweenValue.isPresent())
 				        + renderVariables(templateBlock,
 				                (Map<String, Object>) member));
 				isFirst = false;
