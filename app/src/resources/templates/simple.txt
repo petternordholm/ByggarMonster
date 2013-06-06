@@ -4,7 +4,7 @@ public class ${className}Builder {
 {EACH members}    private ${type} ${name};
 {/EACH}
     public ${className} build() {
-        return new ${className}({EACH members ", "}${name}{/EACH});
+        return new ${className}({EACH constructorParameters ", "}${name}{/EACH});
     }
 {EACH members}
     public ${className}Builder with${name}(final ${type} ${name}) {

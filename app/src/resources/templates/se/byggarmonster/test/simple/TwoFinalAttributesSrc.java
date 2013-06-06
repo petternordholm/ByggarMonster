@@ -4,10 +4,9 @@ public class TwoFinalAttributesSrc {
 	private final int myInt;
 	private final String myString;
 
-	public TwoFinalAttributesSrc(final int theOtherConstructorParam,
-	        final String myStringConstrParam) {
-		this.myString = myStringConstrParam;
-		this.myInt = theOtherConstructorParam;
+	public TwoFinalAttributesSrc(final int myInt, final String myString) {
+		this.myString = myString;
+		this.myInt = myInt;
 	}
 
 	public int getMyInt() {

@@ -2,6 +2,8 @@ package se.byggarmonster.lib.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import se.byggarmonster.lib.parser.JavaBaseListener;
@@ -10,34 +12,22 @@ import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
 import se.byggarmonster.lib.parser.JavaParser.MemberDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
-import se.byggarmonster.lib.parser.JavaParser.VariableDeclaratorContext;
 
 public class BuilderPatternGenerator extends JavaBaseListener {
 	private String className;
 	/**
 	 * Name => Type
 	 */
-	private final Map<String, Object> constructorParameters;
+	private final LinkedList<VariableHolder> constructorParameters;
 	/**
 	 * Name => Type
 	 */
-	private final Map<String, Object> memberAttributes;
+	private final ArrayList<VariableHolder> members;
 	private String packageName;
 
 	public BuilderPatternGenerator() {
-		constructorParameters = new HashMap<String, Object>();
-		memberAttributes = new HashMap<String, Object>();
-	}
-
-	@Override
-	public void exitFieldDeclaration(final FieldDeclarationContext ctx) {
-		for (int i = 0; i < ctx.variableDeclarators().getChildCount(); i++) {
-			final VariableDeclaratorContext child = (VariableDeclaratorContext) ctx
-			        .variableDeclarators().getChild(i);
-			final MemberDeclarationContext mDC = (MemberDeclarationContext) child
-			        .getParent().getParent().getParent();
-			memberAttributes.put(child.getText(), mDC.type().getText());
-		}
+		constructorParameters = new LinkedList<VariableHolder>();
+		members = new ArrayList<VariableHolder>();
 	}
 
 	/**
@@ -46,9 +36,20 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	@Override
 	public void exitFormalParameterDeclsRest(
 	        final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
-		constructorParameters.put(ctx.getText(),
+		constructorParameters.addFirst(new VariableHolder(ctx
+		        .variableDeclaratorId().getText(),
 		        ((FormalParameterDeclsContext) ctx.getParent()).type()
-		                .getText());
+		                .getText()));
+	}
+
+	@Override
+	public void exitMemberDeclaration(final MemberDeclarationContext mdc) {
+		if (mdc.getChild(1) instanceof FieldDeclarationContext) {
+			final FieldDeclarationContext fieldDeclarationContext = (FieldDeclarationContext) mdc
+			        .getChild(1);
+			members.add(new VariableHolder(fieldDeclarationContext
+			        .variableDeclarators().getText(), mdc.type().getText()));
+		}
 	}
 
 	@Override
@@ -69,12 +70,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return className;
 	}
 
-	public Map<String, Object> getConstructorParameters() {
+	public List<VariableHolder> getConstructorParameters() {
 		return constructorParameters;
 	}
 
-	public Map<String, Object> getMemberAttributes() {
-		return memberAttributes;
+	public List<VariableHolder> getMembers() {
+		return members;
 	}
 
 	public String getPackageName() {
@@ -86,14 +87,23 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		context.put("packageName", getPackageName());
 		context.put("className", getClassName());
 		final ArrayList<Map<String, Object>> members = new ArrayList<Map<String, Object>>();
-		for (final String member : getMemberAttributes().keySet()) {
-			final Map<String, Object> memberAttributesMap = new HashMap<String, Object>();
-			memberAttributesMap.put("name", member);
-			memberAttributesMap.put("type", getMemberAttributes().get(member));
-			members.add(memberAttributesMap);
+		for (final VariableHolder member : getMembers()) {
+			final Map<String, Object> map = new HashMap<String, Object>();
+			map.put("name", member.getName());
+			map.put("type", member.getType());
+			members.add(map);
 		}
-
 		context.put("members", members);
+
+		final ArrayList<Map<String, Object>> constructorParameters = new ArrayList<Map<String, Object>>();
+		for (final VariableHolder constructorParameter : getConstructorParameters()) {
+			final Map<String, Object> map = new HashMap<String, Object>();
+			map.put("name", constructorParameter.getName());
+			map.put("type", constructorParameter.getType());
+			constructorParameters.add(map);
+		}
+		context.put("constructorParameters", constructorParameters);
+
 		return TemplateHelper.render(templatePath, context);
 	}
 }

@@ -5,9 +5,9 @@ public class TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc {
 	private final String myString;
 
 	public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc(
-	        final String myStringConstrParam, final int theOtherConstructorParam) {
-		this.myString = myStringConstrParam;
-		this.myInt = theOtherConstructorParam;
+	        final String myString, final int myInt) {
+		this.myString = myString;
+		this.myInt = myInt;
 	}
 
 	public int getMyInt() {
