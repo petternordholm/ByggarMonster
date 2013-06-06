@@ -39,30 +39,30 @@ public class TestRunner {
 
 	private void testBuilder(final String name) throws IOException {
 		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES + "/"
-				+ name, SRC_JAVA);
+		        + name, SRC_JAVA);
 		assertTrue("There should be at least one test for the builder, " + name
-				+ ".", sourceFiles.size() > 0);
+		        + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
 			final String assertedFile = sourceFile.substring(0,
-					sourceFile.length() - SRC_JAVA.length())
-					+ ASSERTED_JAVA;
+			        sourceFile.length() - SRC_JAVA.length())
+			        + ASSERTED_JAVA;
 			final String source = Files.toString(new File(sourceFile),
-					Charsets.UTF_8);
+			        Charsets.UTF_8);
 			final String asserted = Files.toString(new File(assertedFile),
-					Charsets.UTF_8);
+			        Charsets.UTF_8);
 			final String actual = new ByggarMonsterAPIBuilder() //
-					.withSource(source) //
-					.withBuilder(name) //
-					.build() //
-					.toString();
-			System.out.println("Testing " + source + " " + asserted);
+			        .withSource(source) //
+			        .withBuilder(name) //
+			        .build() //
+			        .toString();
+			System.out.println("Testing " + sourceFile);
 			assertEquals(asserted, actual);
 		}
 	}
 
 	@Test
 	public void testThatBuildersAreGeneratedFromResourcesFolder()
-			throws IOException {
+	        throws IOException {
 		testBuilder("simple");
 	}
 }

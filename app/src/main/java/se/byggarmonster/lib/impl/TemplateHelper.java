@@ -19,8 +19,8 @@ public class TemplateHelper {
 		String template;
 		try {
 			template = Files.toString(new File(templateFile), Charsets.UTF_8);
-			template = renderEach(template, context);
 			template = renderVariables(template, context);
+			template = renderEach(template, context);
 			return template;
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
@@ -30,10 +30,13 @@ public class TemplateHelper {
 	private static String renderEach(final String template,
 	        final Map<String, Object> context) {
 		String renderedTemplate = new String(template);
-		final Pattern p = Pattern
-		        .compile("\\{EACH ([a-zA-Z0-9]*)( \"[^\"]*\")?\\}(.*)\\{/EACH\\}");
-		final Matcher m = p.matcher(template);
-		while (m.find()) {
+		final Pattern p = Pattern.compile(
+		        "\\{EACH ([a-zA-Z0-9]*)( \"[^\"]*\")?\\}(.*?)\\{/EACH\\}",
+		        Pattern.DOTALL);
+		while (true) {
+			final Matcher m = p.matcher(renderedTemplate);
+			if (!m.find())
+				break;
 			final String regionString = m.group(0);
 			final String variableName = m.group(1);
 			Optional<String> betweenValue = Optional.fromNullable(m.group(2));
@@ -48,9 +51,11 @@ public class TemplateHelper {
 			final StringBuilder renderedBlock = new StringBuilder();
 			boolean isFirst = true;
 			for (final Object member : members) {
-				renderedBlock.append((isFirst ? "" : betweenValue.isPresent())
-				        + renderVariables(templateBlock,
-				                (Map<String, Object>) member));
+				renderedBlock
+				        .append((!isFirst && betweenValue.isPresent() ? betweenValue
+				                .get() : "")
+				                + renderVariables(templateBlock,
+				                        (Map<String, Object>) member));
 				isFirst = false;
 			}
 
@@ -82,7 +87,9 @@ public class TemplateHelper {
 		return regionString //
 		        .replaceAll(quoteReplacement("$"), quoteReplacement("\\$")) //
 		        .replaceAll("\\{", "\\\\{") //
-		        .replaceAll("\\}", "\\\\}");
+		        .replaceAll("\\}", "\\\\}") //
+		        .replaceAll("\\(", "\\\\(") //
+		        .replaceAll("\\)", "\\\\)");
 	}
 
 }

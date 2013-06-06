@@ -4,13 +4,12 @@ public class ${className}Builder {
 {EACH members}    private ${type} ${name};
 {/EACH}
     public StringHolderSrc build() {
-        return new ${className}({EACH members ", "}${type} ${name}{/EACH});
+        return new ${className}({EACH members ", "}${name}{/EACH});
     }
-
-{EACH members}    public ${className}Builder with${name}(final int ${name}) {
+{EACH members}
+    public ${className}Builder with${name}(final ${type} ${name}) {
         this.${name} = ${name};
         return this;
     }
-
 {/EACH}
 }
