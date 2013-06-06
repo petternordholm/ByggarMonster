@@ -1,6 +1,6 @@
-package ${PACKAGE};
+package ${packageName};
 
-public class ${className} {
+public class ${className}Builder {
 {EACH members}    private ${type} ${name};
 {/EACH}
     public StringHolderSrc build() {
