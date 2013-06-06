@@ -1,10 +1,10 @@
 package se.byggarmonster.test.simple;
 
-public class StringHolderSrc {
+public class TwoFinalAttributesSrc {
 	private final int myInt;
 	private final String myString;
 
-	public StringHolderSrc(final int theOtherConstructorParam,
+	public TwoFinalAttributesSrc(final int theOtherConstructorParam,
 	        final String myStringConstrParam) {
 		this.myString = myStringConstrParam;
 		this.myInt = theOtherConstructorParam;

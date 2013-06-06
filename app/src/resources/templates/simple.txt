@@ -3,7 +3,7 @@ package ${packageName};
 public class ${className}Builder {
 {EACH members}    private ${type} ${name};
 {/EACH}
-    public StringHolderSrc build() {
+    public ${className} build() {
         return new ${className}({EACH members ", "}${name}{/EACH});
     }
 {EACH members}
