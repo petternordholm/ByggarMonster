@@ -41,12 +41,11 @@ public class TemplateHelper {
 			final String value = (String) context.get(variableName);
 			if (value == null)
 				continue;
-			final String regExp = regionString //
+			final String regionStringAsRegExp = regionString //
 			        .replaceAll(quoteReplacement("$"), quoteReplacement("\\$")) //
 			        .replaceAll("\\{", "\\\\{") //
 			        .replaceAll("\\}", "\\\\}");
-			System.out.println(regExp);
-			renderedTemplate = template.replaceAll(regExp, value);
+			renderedTemplate = template.replaceAll(regionStringAsRegExp, value);
 		}
 		return renderedTemplate;
 	}
