@@ -31,14 +31,14 @@ public class TemplateHelper {
 	        final Map<String, Object> context) {
 		String renderedTemplate = new String(template);
 		final Pattern p = Pattern
-		        .compile("\\{EACH ([a-zA-Z0-9]*) \"([^\"]*\")\\}(.*)\\{/EACH\\}");
+		        .compile("\\{EACH ([a-zA-Z0-9]*)( \"[^\"]*\")?\\}(.*)\\{/EACH\\}");
 		final Matcher m = p.matcher(template);
 		while (m.find()) {
 			final String regionString = m.group(0);
 			final String variableName = m.group(1);
 			Optional<String> betweenValue = Optional.fromNullable(m.group(2));
 			if (betweenValue.isPresent()) {
-				betweenValue = Optional.of(betweenValue.get().substring(0,
+				betweenValue = Optional.of(betweenValue.get().substring(2,
 				        m.group(2).length() - 1));
 			}
 			final String templateBlock = m.group(3);
@@ -54,8 +54,8 @@ public class TemplateHelper {
 				isFirst = false;
 			}
 
-			renderedTemplate = template.replaceAll(toRegExp(regionString),
-			        renderedBlock.toString());
+			renderedTemplate = renderedTemplate.replaceAll(
+			        toRegExp(regionString), renderedBlock.toString());
 			isFirst = false;
 		}
 		return renderedTemplate;
