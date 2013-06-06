@@ -1,0 +1,16 @@
+package ${PACKAGE};
+
+public class ${className} {
+{EACH members}    private ${type} ${name};
+{/EACH}
+    public StringHolderSrc build() {
+        return new ${className}({EACH members ", "}${type} ${name}{/EACH});
+    }
+
+{EACH members}    public ${className}Builder with${name}(final int ${name}) {
+        this.${name} = ${name};
+        return this;
+    }
+
+{/EACH}
+}
