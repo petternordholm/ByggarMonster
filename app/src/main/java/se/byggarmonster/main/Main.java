@@ -9,11 +9,12 @@ public class Main {
 	public static void main(final String[] args) {
 		final Map<String, String> argsMap = parsArgs(args);
 		System.out.println( //
-				new ByggarMonsterAPIBuilder() //
-						.withSource(argsMap.get("source")) //
-						.build() //
-						.toString() //
-				);
+		        new ByggarMonsterAPIBuilder() //
+		                .withSource(argsMap.get("source")) //
+		                .withTemplate(argsMap.get("template")) //
+		                .build() //
+		                .toString() //
+		        );
 	}
 
 	private static Map<String, String> parsArgs(final String[] args) {
