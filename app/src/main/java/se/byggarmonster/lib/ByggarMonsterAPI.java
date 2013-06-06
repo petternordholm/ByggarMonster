@@ -3,12 +3,11 @@ package se.byggarmonster.lib;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.tree.ParseTree;
 
 import se.byggarmonster.lib.impl.simple.SimpleBuilder;
+import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaLexer;
 import se.byggarmonster.lib.parser.JavaParser;
-import se.byggarmonster.lib.parser.JavaParser.CompilationUnitContext;
 
 public class ByggarMonsterAPI {
 	private final String builderName;
@@ -34,23 +33,20 @@ public class ByggarMonsterAPI {
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final JavaParser parser = new JavaParser(tokens);
 		try {
-			final CompilationUnitContext cu = parser.compilationUnit();
+			JavaBaseListener builderInstance = null;
 			if (builderName.equalsIgnoreCase("simple")) {
-				final SimpleBuilder builderInstance = new SimpleBuilder();
-				traverse(cu, builderInstance);
-				return builderInstance.toString();
+				builderInstance = new SimpleBuilder();
+			} else {
+				throw new RuntimeException("Builder " + builderName
+						+ " not supported.");
 			}
-			throw new RuntimeException("Builder " + builderName
-					+ " not supported.");
+			parser.setBuildParseTree(true);
+			parser.addParseListener(builderInstance);
+			parser.compilationUnit();
+			return builderInstance.toString();
 		} catch (final RecognitionException e) {
 			e.printStackTrace();
 		}
 		return builderCode;
-	}
-
-	private void traverse(final ParseTree parseTree, final SimpleBuilder builder) {
-		builder.visit(parseTree);
-		for (int i = 0; i < parseTree.getChildCount(); i++)
-			traverse(parseTree.getChild(i), builder);
 	}
 }
