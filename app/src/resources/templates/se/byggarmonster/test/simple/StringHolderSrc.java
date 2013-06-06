@@ -1,4 +1,4 @@
-package se.byggarmonster.test;
+package se.byggarmonster.test.simple;
 
 public class StringHolderSrc {
 	private final int myInt;

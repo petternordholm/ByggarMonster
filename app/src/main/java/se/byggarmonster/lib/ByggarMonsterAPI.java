@@ -4,26 +4,25 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RecognitionException;
 
-import se.byggarmonster.lib.impl.simple.SimpleBuilder;
-import se.byggarmonster.lib.parser.JavaBaseListener;
+import se.byggarmonster.lib.impl.BuilderPatternGenerator;
 import se.byggarmonster.lib.parser.JavaLexer;
 import se.byggarmonster.lib.parser.JavaParser;
 
 public class ByggarMonsterAPI {
-	private final String builderName;
 	private final String source;
+	private final String templatePath;
 
-	public ByggarMonsterAPI(final String source, final String builder) {
+	public ByggarMonsterAPI(final String source, final String templatePath) {
 		this.source = source;
-		this.builderName = builder;
-	}
-
-	public String getBuilder() {
-		return builderName;
+		this.templatePath = templatePath;
 	}
 
 	public String getSource() {
 		return source;
+	}
+
+	public String getTemplatePath() {
+		return templatePath;
 	}
 
 	@Override
@@ -33,17 +32,11 @@ public class ByggarMonsterAPI {
 		final CommonTokenStream tokens = new CommonTokenStream(lexer);
 		final JavaParser parser = new JavaParser(tokens);
 		try {
-			JavaBaseListener builderInstance = null;
-			if (builderName.equalsIgnoreCase("simple")) {
-				builderInstance = new SimpleBuilder();
-			} else {
-				throw new RuntimeException("Builder " + builderName
-						+ " not supported.");
-			}
+			final BuilderPatternGenerator builderInstance = new BuilderPatternGenerator();
 			parser.setBuildParseTree(true);
 			parser.addParseListener(builderInstance);
 			parser.compilationUnit();
-			return builderInstance.toString();
+			return builderInstance.render(templatePath);
 		} catch (final RecognitionException e) {
 			e.printStackTrace();
 		}

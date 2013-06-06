@@ -21,7 +21,7 @@ import com.google.common.io.Files;
 public class TestRunner {
 	private static final String ASSERTED_JAVA = "SrcBuilder.java";
 	private static final String SRC_JAVA = "Src.java";
-	private static final String SRC_TEST_RESOURCES = "src/resources";
+	private static final String SRC_TEST_RESOURCES = "src/resources/templates";
 
 	public List<String> getAllFiles(final String folder, final String ending) {
 		final ArrayList<String> files = new ArrayList<String>();
@@ -38,8 +38,8 @@ public class TestRunner {
 	}
 
 	private void testBuilder(final String name) throws IOException {
-		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES + "/"
-		        + name, SRC_JAVA);
+		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES
+		        + "/se/byggarmonster/test/" + name, SRC_JAVA);
 		assertTrue("There should be at least one test for the builder, " + name
 		        + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
@@ -52,7 +52,7 @@ public class TestRunner {
 			        Charsets.UTF_8);
 			final String actual = new ByggarMonsterAPIBuilder() //
 			        .withSource(source) //
-			        .withBuilder(name) //
+			        .withTemplate(SRC_TEST_RESOURCES + "/" + name + ".txt") //
 			        .build() //
 			        .toString();
 			System.out.println("Testing " + sourceFile);

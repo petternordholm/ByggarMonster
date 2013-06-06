@@ -1,5 +1,6 @@
 package se.byggarmonster.lib.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 import se.byggarmonster.lib.parser.JavaParser.VariableDeclaratorContext;
 
-public abstract class BuilderPatternGenerator extends JavaBaseListener {
+public class BuilderPatternGenerator extends JavaBaseListener {
 	private String className;
 	/**
 	 * Name => Type
@@ -80,6 +81,19 @@ public abstract class BuilderPatternGenerator extends JavaBaseListener {
 		return packageName;
 	}
 
-	@Override
-	public abstract String toString();
+	public String render(final String templatePath) {
+		final Map<String, Object> context = new HashMap<String, Object>();
+		context.put("packageName", getPackageName());
+		context.put("className", getClassName());
+		final ArrayList<Map<String, Object>> members = new ArrayList<Map<String, Object>>();
+		for (final String member : getMemberAttributes().keySet()) {
+			final Map<String, Object> memberAttributesMap = new HashMap<String, Object>();
+			memberAttributesMap.put("name", member);
+			memberAttributesMap.put("type", getMemberAttributes().get(member));
+			members.add(memberAttributesMap);
+		}
+
+		context.put("members", members);
+		return TemplateHelper.render(templatePath, context);
+	}
 }
