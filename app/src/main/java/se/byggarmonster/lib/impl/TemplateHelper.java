@@ -4,6 +4,7 @@ import static java.util.regex.Matcher.quoteReplacement;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -27,7 +28,33 @@ public class TemplateHelper {
 
 	private static String renderEach(final String template,
 	        final Map<String, Object> context) {
-		return renderVariables(template, context);
+		String renderedTemplate = new String(template);
+		final Pattern p = Pattern
+		        .compile("\\{EACH ([a-zA-Z0-9]*) \"([^\"]*\")\\}(.*)\\{/EACH\\}");
+		final Matcher m = p.matcher(template);
+		while (m.find()) {
+			final String regionString = m.group(0);
+			final String variableName = m.group(1);
+			final String betweenValue = m.group(2).substring(0,
+			        m.group(2).length() - 1);
+			final String templateBlock = m.group(3);
+			final List<Object> members = ((List<Object>) context
+			        .get(variableName));
+
+			final StringBuilder renderedBlock = new StringBuilder();
+			boolean isFirst = true;
+			for (final Object member : members) {
+				renderedBlock.append((isFirst ? "" : betweenValue)
+				        + renderVariables(templateBlock,
+				                (Map<String, Object>) member));
+				isFirst = false;
+			}
+
+			renderedTemplate = template.replaceAll(toRegExp(regionString),
+			        renderedBlock.toString());
+			isFirst = false;
+		}
+		return renderedTemplate;
 	}
 
 	private static String renderVariables(final String template,
@@ -41,13 +68,17 @@ public class TemplateHelper {
 			final String value = (String) context.get(variableName);
 			if (value == null)
 				continue;
-			final String regionStringAsRegExp = regionString //
-			        .replaceAll(quoteReplacement("$"), quoteReplacement("\\$")) //
-			        .replaceAll("\\{", "\\\\{") //
-			        .replaceAll("\\}", "\\\\}");
-			renderedTemplate = template.replaceAll(regionStringAsRegExp, value);
+			renderedTemplate = renderedTemplate.replaceAll(
+			        toRegExp(regionString), value);
 		}
 		return renderedTemplate;
+	}
+
+	private static String toRegExp(final String regionString) {
+		return regionString //
+		        .replaceAll(quoteReplacement("$"), quoteReplacement("\\$")) //
+		        .replaceAll("\\{", "\\\\{") //
+		        .replaceAll("\\}", "\\\\}");
 	}
 
 }
