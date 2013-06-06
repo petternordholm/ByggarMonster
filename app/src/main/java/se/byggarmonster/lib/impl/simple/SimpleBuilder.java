@@ -1,16 +1,20 @@
 package se.byggarmonster.lib.impl.simple;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import se.byggarmonster.lib.parser.JavaBaseListener;
+import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 
 public class SimpleBuilder extends JavaBaseListener {
-	private final List<String> constructorParameterNames;
+	/**
+	 * Name => Type
+	 */
+	private final Map<String, String> constructorParameters;
 
 	public SimpleBuilder() {
-		constructorParameterNames = new ArrayList<String>();
+		constructorParameters = new HashMap<String, String>();
 	}
 
 	/**
@@ -21,7 +25,9 @@ public class SimpleBuilder extends JavaBaseListener {
 			final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
 		System.out.println("exiting exitFormalParameterDeclsRest "
 				+ ctx.getText());
-		constructorParameterNames.add(ctx.getText());
+		constructorParameters.put(ctx.getText(),
+				((FormalParameterDeclsContext) ctx.getParent()).type()
+						.getText());
 	}
 
 	/**
@@ -35,8 +41,8 @@ public class SimpleBuilder extends JavaBaseListener {
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder();
-		for (final String name : constructorParameterNames)
-			sb.append(" " + name);
+		for (final String name : constructorParameters.keySet())
+			sb.append(" " + name + "(" + constructorParameters.get(name) + ")");
 		return sb.toString();
 	}
 }
