@@ -9,7 +9,7 @@ public class ClassData {
 	private final String className;
 	private final List<NameTypePair> constructorParameters;
 	private final MethodMapping getterMapping;
-	private final MemberMapping memberMapping;
+	private final MemberMapping constructorMemberMapping;
 	private final List<NameTypePair> members;
 	private final String packageName;
 	private final MethodMapping setterMapping;
@@ -17,13 +17,13 @@ public class ClassData {
 	public ClassData(final String className, final String packageName,
 	        final List<NameTypePair> constructorParameters,
 	        final List<NameTypePair> members,
-	        final MemberMapping memberMapping2,
+	        final MemberMapping constructorMemberMapping,
 	        final MethodMapping setterMapping, final MethodMapping getterMapping) {
 		this.className = className;
 		this.packageName = packageName;
 		this.constructorParameters = constructorParameters;
 		this.members = members;
-		this.memberMapping = memberMapping2;
+		this.constructorMemberMapping = constructorMemberMapping;
 		this.setterMapping = setterMapping;
 		this.getterMapping = getterMapping;
 	}
@@ -40,8 +40,8 @@ public class ClassData {
 		return getterMapping;
 	}
 
-	public MemberMapping getMemberMapping() {
-		return memberMapping;
+	public MemberMapping getConstructorMemberMapping() {
+		return constructorMemberMapping;
 	}
 
 	public List<NameTypePair> getMembers() {

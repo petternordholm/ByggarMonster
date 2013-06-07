@@ -30,7 +30,9 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 
 	@Override
 	public void exitConstructorBody(final ConstructorBodyContext ctx) {
-		findMemberMappingsInBlocks(ctx.blockStatement());
+		classDataBuilder
+		        .withConstructorMemberMappings(findMemberMappingsInBlocks(ctx
+		                .blockStatement()));
 	}
 
 	/**
@@ -105,7 +107,6 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			final String constructorName = exprContext.getChild(2).getText();
 			foundMappings.put(constructorName, memberName);
 		}
-		classDataBuilder.withMemberMappings(foundMappings);
 		return foundMappings;
 	}
 
@@ -139,7 +140,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		for (final NameTypePair constructorParameter : pairs) {
 			new HashMap<String, Object>();
 			mapped.add(new NameTypePair(checkNotNull(
-			        classDataBuilder.build().getMemberMapping()
+			        classDataBuilder.build().getConstructorMemberMapping()
 			                .getAttribute(constructorParameter.getName()),
 			        constructorParameter.getName() + " has no memberMapping"),
 			        checkNotNull(constructorParameter.getType(),

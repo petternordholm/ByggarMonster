@@ -10,9 +10,9 @@ import se.byggarmonster.lib.impl.data.MethodMapping;
 
 public class ClassDataBuilder {
 	private String className;
+	private final MemberMapping constructorMemberMapping;
 	private final LinkedList<NameTypePair> constructorParameters;
 	private final MethodMapping getterMapping;
-	private final MemberMapping memberMapping;
 	private final List<NameTypePair> members;
 	private String packageName;
 	private final MethodMapping setterMapping;
@@ -20,18 +20,24 @@ public class ClassDataBuilder {
 	public ClassDataBuilder() {
 		constructorParameters = new LinkedList<NameTypePair>();
 		members = new ArrayList<NameTypePair>();
-		memberMapping = new MemberMapping();
+		constructorMemberMapping = new MemberMapping();
 		setterMapping = new MethodMapping();
 		getterMapping = new MethodMapping();
 	}
 
 	public ClassData build() {
 		return new ClassData(className, packageName, constructorParameters,
-		        members, memberMapping, setterMapping, getterMapping);
+		        members, constructorMemberMapping, setterMapping, getterMapping);
 	}
 
 	public ClassDataBuilder withClassName(final String text) {
 		this.className = text;
+		return this;
+	}
+
+	public ClassDataBuilder withConstructorMemberMappings(
+	        final Map<String, String> foundMappings) {
+		constructorMemberMapping.include(foundMappings);
 		return this;
 	}
 
@@ -49,12 +55,6 @@ public class ClassDataBuilder {
 
 	public ClassDataBuilder withMember(final NameTypePair nameTypePair) {
 		this.members.add(nameTypePair);
-		return this;
-	}
-
-	public ClassDataBuilder withMemberMappings(
-	        final Map<String, String> foundMappings) {
-		memberMapping.include(foundMappings);
 		return this;
 	}
 
