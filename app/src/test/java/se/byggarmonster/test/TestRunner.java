@@ -19,7 +19,8 @@ import com.google.common.io.Files;
 
 public class TestRunner {
 	private interface ResultInspector {
-		public void inspect(String sourceFile, String asserted, String actual);
+		public void inspect(String sourceFile, Optional<String> asserted,
+		        String actual);
 	}
 
 	public static final String ASSERTED_JAVA = "SrcBuilder.java";
@@ -42,6 +43,14 @@ public class TestRunner {
 		return files;
 	}
 
+	private Optional<String> getContentIfExists(final String file) {
+		try {
+			return Optional.of(Files.toString(new File(file), Charsets.UTF_8));
+		} catch (final IOException e) {
+			return Optional.absent();
+		}
+	}
+
 	protected void testBuilder(final List<String> sourceFiles,
 	        final String template, final ResultInspector resultInspector)
 	        throws IOException {
@@ -52,8 +61,7 @@ public class TestRunner {
 			        + ASSERTED_JAVA;
 			final String source = Files.toString(new File(sourceFile),
 			        Charsets.UTF_8);
-			final String asserted = Files.toString(new File(assertedFile),
-			        Charsets.UTF_8);
+			final Optional<String> asserted = getContentIfExists(assertedFile);
 			final String actual = new ByggarMonsterAPIBuilder() //
 			        .withSource(source) //
 			        .withTemplate(template) //
@@ -72,8 +80,9 @@ public class TestRunner {
 		        new ResultInspector() {
 			        @Override
 			        public void inspect(final String sourceFile,
-			                final String asserted, final String actual) {
-				        assertEquals(sourceFile, asserted, actual);
+			                final Optional<String> asserted, final String actual) {
+				        if (asserted.isPresent())
+					        assertEquals(sourceFile, asserted.get(), actual);
 			        }
 		        });
 	}
@@ -98,13 +107,15 @@ public class TestRunner {
 			        new ResultInspector() {
 				        @Override
 				        public void inspect(final String sourceFile,
-				                final String asserted, final String actual) {
-					        assertNotEquals(
-					                sourceFile
-					                        + "Is implemented, move it to implemented test suite.",
-					                asserted, actual);
+				                final Optional<String> asserted,
+				                final String actual) {
+					        if (asserted.isPresent())
+						        assertNotEquals(
+						                sourceFile
+						                        + "Is implemented, move it to implemented test suite.",
+						                asserted, actual);
 					        try {
-						        assertEquals(asserted, actual);
+						        assertEquals(asserted.get(), actual);
 					        } catch (final AssertionError e) {
 						        System.err.println(e.toString());
 					        } catch (final Exception e) {
