@@ -1,5 +1,7 @@
 package se.byggarmonster.lib.impl;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -21,7 +23,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	/**
 	 * Name => Type
 	 */
-	private final LinkedList<VariableHolder> constructorParameters;
+	private final LinkedList<NameTypePair> constructorParameters;
 	/**
 	 * Constructor parameter => member attribute
 	 */
@@ -29,12 +31,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	/**
 	 * Name => Type
 	 */
-	private final ArrayList<VariableHolder> members;
+	private final ArrayList<NameTypePair> members;
 	private String packageName;
 
 	public BuilderPatternGenerator() {
-		constructorParameters = new LinkedList<VariableHolder>();
-		members = new ArrayList<VariableHolder>();
+		constructorParameters = new LinkedList<NameTypePair>();
+		members = new ArrayList<NameTypePair>();
 		memberMapping = new HashMap<String, String>();
 	}
 
@@ -56,7 +58,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	@Override
 	public void exitFormalParameterDeclsRest(
 	        final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
-		constructorParameters.addFirst(new VariableHolder(ctx
+		constructorParameters.addFirst(new NameTypePair(ctx
 		        .variableDeclaratorId().getText(),
 		        ((FormalParameterDeclsContext) ctx.getParent()).type()
 		                .getText()));
@@ -67,7 +69,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		if (mdc.getChild(1) instanceof FieldDeclarationContext) {
 			final FieldDeclarationContext fieldDeclarationContext = (FieldDeclarationContext) mdc
 			        .getChild(1);
-			members.add(new VariableHolder(fieldDeclarationContext
+			members.add(new NameTypePair(fieldDeclarationContext
 			        .variableDeclarators().getText(), mdc.type().getText()));
 		}
 	}
@@ -90,16 +92,29 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return className;
 	}
 
-	public List<VariableHolder> getConstructorParameters() {
+	public List<NameTypePair> getConstructorParameters() {
 		return constructorParameters;
 	}
 
-	public List<VariableHolder> getMembers() {
+	public List<NameTypePair> getMembers() {
 		return members;
 	}
 
 	public String getPackageName() {
 		return packageName;
+	}
+
+	private List<NameTypePair> mapToMembers(final List<NameTypePair> pairs) {
+		final List<NameTypePair> mapped = new ArrayList<NameTypePair>();
+		for (final NameTypePair constructorParameter : pairs) {
+			new HashMap<String, Object>();
+			mapped.add(new NameTypePair(checkNotNull(
+			        memberMapping.get(constructorParameter.getName()),
+			        constructorParameter.getName() + " has no memberMapping"),
+			        checkNotNull(constructorParameter.getType(),
+			                constructorParameter.getName() + " has null type")));
+		}
+		return mapped;
 	}
 
 	private String removeThis(final String text) {
@@ -110,26 +125,27 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 
 	public String render(final String templatePath) {
 		final Map<String, Object> context = new HashMap<String, Object>();
-		context.put("packageName", getPackageName());
-		context.put("className", getClassName());
-		final ArrayList<Map<String, Object>> members = new ArrayList<Map<String, Object>>();
-		for (final VariableHolder member : getMembers()) {
-			final Map<String, Object> map = new HashMap<String, Object>();
-			map.put("name", member.getName());
-			map.put("type", member.getType());
-			members.add(map);
-		}
-		context.put("members", members);
+		context.put("packageName", checkNotNull(getPackageName()));
+		context.put("className", checkNotNull(getClassName()));
+		context.put("members", toListOfNameTypeMap(getMembers()));
+		context.put("constructorParameters",
+		        toListOfNameTypeMap(mapToMembers(getConstructorParameters())));
+		return TemplateHelper.render(templatePath, context);
+	}
 
+	private List<Map<String, Object>> toListOfNameTypeMap(
+	        final List<NameTypePair> list) {
 		final ArrayList<Map<String, Object>> constructorParameters = new ArrayList<Map<String, Object>>();
-		for (final VariableHolder constructorParameter : getConstructorParameters()) {
+		for (final NameTypePair constructorParameter : list) {
 			final Map<String, Object> map = new HashMap<String, Object>();
-			map.put("name", memberMapping.get(constructorParameter.getName()));
-			map.put("type", constructorParameter.getType());
+			map.put("name",
+			        checkNotNull(constructorParameter.getName(),
+			                constructorParameter.getName() + " is null"));
+			map.put("type",
+			        checkNotNull(constructorParameter.getType(),
+			                constructorParameter.getName() + " has null type"));
 			constructorParameters.add(map);
 		}
-		context.put("constructorParameters", constructorParameters);
-
-		return TemplateHelper.render(templatePath, context);
+		return constructorParameters;
 	}
 }

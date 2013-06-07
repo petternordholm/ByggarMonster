@@ -43,6 +43,7 @@ public class TestRunner {
 		assertTrue("There should be at least one test for the builder, " + name
 		        + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
+			System.out.println("Testing " + sourceFile);
 			final String assertedFile = sourceFile.substring(0,
 			        sourceFile.length() - SRC_JAVA.length())
 			        + ASSERTED_JAVA;
@@ -55,7 +56,6 @@ public class TestRunner {
 			        .withTemplate(SRC_TEST_RESOURCES + "/" + name + ".txt") //
 			        .build() //
 			        .toString();
-			System.out.println("Testing " + sourceFile);
 			assertEquals(asserted, actual);
 		}
 	}

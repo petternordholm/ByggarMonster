@@ -59,11 +59,17 @@ public class TemplateHelper {
 				isFirst = false;
 			}
 
-			renderedTemplate = renderedTemplate.replaceAll(
-			        toRegExp(regionString), renderedBlock.toString());
+			renderedTemplate = renderTemplate(renderedTemplate, regionString,
+			        renderedBlock.toString());
 			isFirst = false;
 		}
 		return renderedTemplate;
+	}
+
+	private static String renderTemplate(final String template,
+	        final String regionString, final String renderedRegion) {
+		return template.replaceAll(toRegExp(regionString),
+		        renderedRegion.toString());
 	}
 
 	private static String renderVariables(final String template,
@@ -77,8 +83,8 @@ public class TemplateHelper {
 			final String value = (String) context.get(variableName);
 			if (value == null)
 				continue;
-			renderedTemplate = renderedTemplate.replaceAll(
-			        toRegExp(regionString), value);
+			renderedTemplate = renderTemplate(renderedTemplate, regionString,
+			        value);
 		}
 		return renderedTemplate;
 	}
