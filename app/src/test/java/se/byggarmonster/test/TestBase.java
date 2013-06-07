@@ -8,20 +8,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
 import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
-/**
- * Will create builders for all data types found in src/test/resources.
- */
-public class TestRunner {
-	private static final String ASSERTED_JAVA = "SrcBuilder.java";
-	private static final String SRC_JAVA = "Src.java";
-	private static final String SRC_TEST_RESOURCES = "src/resources/templates";
+public class TestBase {
+	public static final String ASSERTED_JAVA = "SrcBuilder.java";
+	public static final String SRC_JAVA = "Src.java";
+	public static final String SRC_TEST_RESOURCES = "src/resources/templates";
 
 	public List<String> getAllFiles(final String folder, final String ending) {
 		final ArrayList<String> files = new ArrayList<String>();
@@ -37,11 +32,10 @@ public class TestRunner {
 		return files;
 	}
 
-	private void testBuilder(final String name) throws IOException {
-		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES
-		        + "/se/byggarmonster/test/" + name, SRC_JAVA);
-		assertTrue("There should be at least one test for the builder, " + name
-		        + ".", sourceFiles.size() > 0);
+	protected void testBuilder(final List<String> sourceFiles,
+	        final String template) throws IOException {
+		assertTrue("There should be at least one test for the builder, "
+		        + template + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
 			System.out.println("Testing " + sourceFile);
 			final String assertedFile = sourceFile.substring(0,
@@ -53,16 +47,11 @@ public class TestRunner {
 			        Charsets.UTF_8);
 			final String actual = new ByggarMonsterAPIBuilder() //
 			        .withSource(source) //
-			        .withTemplate(SRC_TEST_RESOURCES + "/" + name + ".txt") //
+			        .withTemplate(template) //
 			        .build() //
 			        .toString();
 			assertEquals(asserted, actual);
 		}
 	}
 
-	@Test
-	public void testThatBuildersAreGeneratedFromResourcesFolder()
-	        throws IOException {
-		testBuilder("simple");
-	}
 }
