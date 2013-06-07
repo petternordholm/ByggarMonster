@@ -3,11 +3,13 @@ package se.byggarmonster.lib.impl;
 import java.util.List;
 import java.util.Map;
 
+import se.byggarmonster.lib.impl.data.MemberMapping;
+
 public class ClassData {
 	private final String className;
 	private final List<NameTypePair> constructorParameters;
 	private final Map<String, String> getterMapping;
-	private final Map<String, String> memberMapping;
+	private final MemberMapping memberMapping;
 	private final List<NameTypePair> members;
 	private final String packageName;
 	private final Map<String, String> setterMapping;
@@ -15,14 +17,14 @@ public class ClassData {
 	public ClassData(final String className, final String packageName,
 	        final List<NameTypePair> constructorParameters,
 	        final List<NameTypePair> members,
-	        final Map<String, String> memberMapping,
+	        final MemberMapping memberMapping2,
 	        final Map<String, String> setterMapping,
 	        final Map<String, String> getterMapping) {
 		this.className = className;
 		this.packageName = packageName;
 		this.constructorParameters = constructorParameters;
 		this.members = members;
-		this.memberMapping = memberMapping;
+		this.memberMapping = memberMapping2;
 		this.setterMapping = setterMapping;
 		this.getterMapping = getterMapping;
 	}
@@ -39,7 +41,7 @@ public class ClassData {
 		return getterMapping;
 	}
 
-	public Map<String, String> getMemberMapping() {
+	public MemberMapping getMemberMapping() {
 		return memberMapping;
 	}
 

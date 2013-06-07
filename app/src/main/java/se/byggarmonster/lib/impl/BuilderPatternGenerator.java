@@ -137,8 +137,9 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		final List<NameTypePair> mapped = new ArrayList<NameTypePair>();
 		for (final NameTypePair constructorParameter : pairs) {
 			new HashMap<String, Object>();
-			mapped.add(new NameTypePair(checkNotNull(classDataBuilder.build()
-			        .getMemberMapping().get(constructorParameter.getName()),
+			mapped.add(new NameTypePair(checkNotNull(
+			        classDataBuilder.build().getMemberMapping()
+			                .getAttribute(constructorParameter.getName()),
 			        constructorParameter.getName() + " has no memberMapping"),
 			        checkNotNull(constructorParameter.getType(),
 			                constructorParameter.getName() + " has null type")));

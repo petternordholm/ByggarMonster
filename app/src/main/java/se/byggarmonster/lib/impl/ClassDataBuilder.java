@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import se.byggarmonster.lib.impl.data.MemberMapping;
+
 public class ClassDataBuilder {
 	private String className;
 
@@ -14,10 +16,7 @@ public class ClassDataBuilder {
 	 */
 	private final LinkedList<NameTypePair> constructorParameters;
 	private final Map<String, String> getterMapping;
-	/**
-	 * Constructor parameter => member attribute
-	 */
-	private final Map<String, String> memberMapping;
+	private final MemberMapping memberMapping;
 	/**
 	 * Name => Type
 	 */
@@ -33,7 +32,7 @@ public class ClassDataBuilder {
 	public ClassDataBuilder() {
 		constructorParameters = new LinkedList<NameTypePair>();
 		members = new ArrayList<NameTypePair>();
-		memberMapping = new HashMap<String, String>();
+		memberMapping = new MemberMapping();
 		setterMapping = new HashMap<String, String>();
 		getterMapping = new HashMap<String, String>();
 	}
@@ -67,7 +66,7 @@ public class ClassDataBuilder {
 
 	public ClassDataBuilder withMemberMappings(
 	        final Map<String, String> foundMappings) {
-		memberMapping.putAll(foundMappings);
+		memberMapping.include(foundMappings);
 		return this;
 	}
 
