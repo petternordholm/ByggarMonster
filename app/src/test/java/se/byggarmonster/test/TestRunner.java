@@ -42,8 +42,6 @@ public class TestRunner {
 	protected void testBuilder(final List<String> sourceFiles,
 	        final String template, final ResultInspector resultInspector)
 	        throws IOException {
-		assertTrue("There should be at least one test for the builder, "
-		        + template + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
 			System.out.println("Testing " + sourceFile);
 			final String assertedFile = sourceFile.substring(0,
@@ -63,10 +61,12 @@ public class TestRunner {
 	}
 
 	public void testImplemented(final String name) throws IOException {
-		testBuilder(
-		        getAllFiles(SRC_TEST_RESOURCES + "/se/byggarmonster/test/"
-		                + name, SRC_JAVA), SRC_TEST_RESOURCES + "/" + name
-		                + ".txt", new ResultInspector() {
+		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES
+		        + "/se/byggarmonster/test/" + name, SRC_JAVA);
+		assertTrue("There should be at least one test for the builder, " + name
+		        + ".", sourceFiles.size() > 0);
+		testBuilder(sourceFiles, SRC_TEST_RESOURCES + "/" + name + ".txt",
+		        new ResultInspector() {
 			        @Override
 			        public void inspect(final String sourceFile,
 			                final String asserted, final String actual) {
