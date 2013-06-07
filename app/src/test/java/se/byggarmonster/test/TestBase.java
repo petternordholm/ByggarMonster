@@ -1,6 +1,5 @@
 package se.byggarmonster.test;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -33,7 +32,8 @@ public class TestBase {
 	}
 
 	protected void testBuilder(final List<String> sourceFiles,
-	        final String template) throws IOException {
+	        final String template, final ResultInspector resultInspector)
+	        throws IOException {
 		assertTrue("There should be at least one test for the builder, "
 		        + template + ".", sourceFiles.size() > 0);
 		for (final String sourceFile : sourceFiles) {
@@ -50,7 +50,7 @@ public class TestBase {
 			        .withTemplate(template) //
 			        .build() //
 			        .toString();
-			assertEquals(asserted, actual);
+			resultInspector.inspect(sourceFile, asserted, actual);
 		}
 	}
 
