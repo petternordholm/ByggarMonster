@@ -4,7 +4,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,33 +25,7 @@ import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 import com.google.common.base.Optional;
 
 public class BuilderPatternGenerator extends JavaBaseListener {
-	private String className;
-	/**
-	 * Name => Type
-	 */
-	private final LinkedList<NameTypePair> constructorParameters;
-	private final Map<String, String> getterMapping;
-	/**
-	 * Constructor parameter => member attribute
-	 */
-	private final Map<String, String> memberMapping;
-	/**
-	 * Name => Type
-	 */
-	private final List<NameTypePair> members;
-	private String packageName;
-	/**
-	 * Setter => type
-	 */
-	private final Map<String, String> setterMapping;
-
-	public BuilderPatternGenerator() {
-		constructorParameters = new LinkedList<NameTypePair>();
-		members = new ArrayList<NameTypePair>();
-		memberMapping = new HashMap<String, String>();
-		setterMapping = new HashMap<String, String>();
-		getterMapping = new HashMap<String, String>();
-	}
+	private final ClassDataBuilder classDataBuilder = new ClassDataBuilder();
 
 	@Override
 	public void exitConstructorBody(final ConstructorBodyContext ctx) {
@@ -66,7 +39,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	public void exitFormalParameterDeclsRest(
 	        final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
 		if (hasParent(ctx, ConstructorDeclaratorRestContext.class))
-			constructorParameters.addFirst(new NameTypePair(ctx
+			classDataBuilder.withConstructorParameter(new NameTypePair(ctx
 			        .variableDeclaratorId().getText(),
 			        ((FormalParameterDeclsContext) ctx.getParent()).type()
 			                .getText()));
@@ -77,8 +50,9 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		if (mdc.getChild(1) instanceof FieldDeclarationContext) {
 			final FieldDeclarationContext fieldDeclarationContext = (FieldDeclarationContext) mdc
 			        .getChild(1);
-			members.add(new NameTypePair(fieldDeclarationContext
-			        .variableDeclarators().getText(), mdc.type().getText()));
+			classDataBuilder.withMember(new NameTypePair(
+			        fieldDeclarationContext.variableDeclarators().getText(),
+			        mdc.type().getText()));
 		}
 	}
 
@@ -89,7 +63,8 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		if (foundMappings.size() == 1) {
 			final MemberDeclContext memberDeclContext = (MemberDeclContext) ctx
 			        .getParent().getParent();
-			setterMapping.put(memberDeclContext.Identifier().getText(),
+			classDataBuilder.withSetterMapping(memberDeclContext.Identifier()
+			        .getText(),
 			        getMember(foundMappings.values().iterator().next())
 			                .getName());
 		}
@@ -97,16 +72,15 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		final Optional<String> returnMember = findReturnInBlocks(ctx.block()
 		        .blockStatement());
 		if (returnMember.isPresent()) {
-			getterMapping.put(
-			        ctx.getParent().getParent().getChild(0).getText(),
-			        returnMember.get());
+			classDataBuilder.withGetterMapping(ctx.getParent().getParent()
+			        .getChild(0).getText(), returnMember.get());
 		}
 	}
 
 	@Override
 	public void exitNormalClassDeclaration(
 	        final NormalClassDeclarationContext ctx) {
-		this.className = ctx.Identifier().getText();
+		classDataBuilder.withClassName(ctx.Identifier().getText());
 	}
 
 	/**
@@ -114,7 +88,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	 */
 	@Override
 	public void exitQualifiedName(final QualifiedNameContext ctx) {
-		this.packageName = ctx.getText();
+		classDataBuilder.withPackageName(ctx.getText());
 	}
 
 	private Map<String, String> findMemberMappingsInBlocks(
@@ -130,7 +104,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			final String constructorName = exprContext.getChild(2).getText();
 			foundMappings.put(constructorName, memberName);
 		}
-		memberMapping.putAll(foundMappings);
+		classDataBuilder.withMemberMappings(foundMappings);
 		return foundMappings;
 	}
 
@@ -145,7 +119,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	}
 
 	private NameTypePair getMember(final String name) {
-		for (final NameTypePair p : members)
+		for (final NameTypePair p : classDataBuilder.build().getMembers())
 			if (p.getName().equals(name))
 				return p;
 		throw new RuntimeException(name + " not found");
@@ -163,8 +137,8 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		final List<NameTypePair> mapped = new ArrayList<NameTypePair>();
 		for (final NameTypePair constructorParameter : pairs) {
 			new HashMap<String, Object>();
-			mapped.add(new NameTypePair(checkNotNull(
-			        memberMapping.get(constructorParameter.getName()),
+			mapped.add(new NameTypePair(checkNotNull(classDataBuilder.build()
+			        .getMemberMapping().get(constructorParameter.getName()),
 			        constructorParameter.getName() + " has no memberMapping"),
 			        checkNotNull(constructorParameter.getType(),
 			                constructorParameter.getName() + " has null type")));
@@ -179,14 +153,16 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	}
 
 	public String render(final String templatePath) {
+		final ClassData classData = classDataBuilder.build();
 		final Map<String, Object> context = new HashMap<String, Object>();
-		context.put("packageName", checkNotNull(packageName));
-		context.put("className", checkNotNull(className));
-		context.put("members", toListOfNameTypeMap(members));
+		context.put("packageName", checkNotNull(classData.getPackageName()));
+		context.put("className", checkNotNull(classData.getClassName()));
+		context.put("members", toListOfNameTypeMap(classData.getMembers()));
 		context.put("constructorParameters",
-		        toListOfNameTypeMap(mapToMembers(constructorParameters)));
-		context.put("setters", toList(setterMapping));
-		context.put("getters", toList(getterMapping));
+		        toListOfNameTypeMap(mapToMembers(classData
+		                .getConstructorParameters())));
+		context.put("setters", toList(classData.getSetterMapping()));
+		context.put("getters", toList(classData.getGetterMapping()));
 		return TemplateHelper.render(templatePath, context);
 	}
 
@@ -216,4 +192,5 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		}
 		return constructorParameters;
 	}
+
 }
