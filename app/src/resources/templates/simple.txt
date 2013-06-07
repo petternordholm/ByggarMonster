@@ -8,6 +8,12 @@ public class ${className}Builder {
 {EACH setters}        instance.${key}(${value});
 {/EACH}        return instance;
     }
+
+    public ${className}Builder from(final ${className} from) {
+        ${className}Builder instance = new ${className}Builder();
+{EACH getters}        instance.${value} = from.${key}();
+{/EACH}        return instance;
+    }
 {EACH members}
     public ${className}Builder with${name}(final ${type} ${name}) {
         this.${name} = ${name};

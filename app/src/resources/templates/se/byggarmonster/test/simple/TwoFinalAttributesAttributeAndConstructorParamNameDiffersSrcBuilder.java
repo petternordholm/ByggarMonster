@@ -9,6 +9,13 @@ public class TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder
         return instance;
     }
 
+    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder from(final TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc from) {
+        TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder instance = new TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder();
+        instance.myString = from.getMyString();
+        instance.myInt = from.getMyInt();
+        return instance;
+    }
+
     public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withmyInt(final int myInt) {
         this.myInt = myInt;
         return this;

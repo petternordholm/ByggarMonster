@@ -29,6 +29,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	 * Name => Type
 	 */
 	private final LinkedList<NameTypePair> constructorParameters;
+	private final HashMap<String, String> getterMapping;
 	/**
 	 * Constructor parameter => member attribute
 	 */
@@ -48,6 +49,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		members = new ArrayList<NameTypePair>();
 		memberMapping = new HashMap<String, String>();
 		setterMapping = new HashMap<String, String>();
+		getterMapping = new HashMap<String, String>();
 	}
 
 	@Override
@@ -89,6 +91,14 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			        getMember(foundMappings.values().iterator().next())
 			                .getName());
 		}
+
+		final String returnMember = findReturnInBlocks(ctx.block()
+		        .blockStatement());
+		if (returnMember != null) {
+			getterMapping.put(
+			        ctx.getParent().getParent().getChild(0).getText(),
+			        returnMember);
+		}
 	}
 
 	@Override
@@ -120,6 +130,15 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		}
 		memberMapping.putAll(foundMappings);
 		return foundMappings;
+	}
+
+	private String findReturnInBlocks(final List<BlockStatementContext> blocks) {
+		for (final BlockStatementContext bsc : blocks) {
+			if (bsc.statement().expression().size() > 0)
+				return bsc.statement().expression().get(0).getChild(0)
+				        .getText();
+		}
+		return null;
 	}
 
 	private NameTypePair getMember(final String name) {
@@ -164,6 +183,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		context.put("constructorParameters",
 		        toListOfNameTypeMap(mapToMembers(constructorParameters)));
 		context.put("setters", toList(setterMapping));
+		context.put("getters", toList(getterMapping));
 		return TemplateHelper.render(templatePath, context);
 	}
 

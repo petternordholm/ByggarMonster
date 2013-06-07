@@ -45,7 +45,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
               <sources>
                 <source>src/main/java</source>
                 <source>src/test/java</source>
-                <source>src/resources/simple</source>
+                <source>src/resources/templates</source>
               </sources>
             </configuration>
           </execution>

@@ -10,6 +10,13 @@ public class TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder {
         return instance;
     }
 
+    public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder from(final TwoFinalAttributesOneParamInConstructorOneSetterSrc from) {
+        TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder instance = new TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder();
+        instance.myString = from.getMyString();
+        instance.myInt = from.getMyInt();
+        return instance;
+    }
+
     public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder withmyInt(final int myInt) {
         this.myInt = myInt;
         return this;
