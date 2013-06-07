@@ -16,12 +16,12 @@ public class TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder
         return instance;
     }
 
-    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withmyInt(final int myInt) {
+    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withMyInt(final int myInt) {
         this.myInt = myInt;
         return this;
     }
 
-    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withmyString(final String myString) {
+    public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withMyString(final String myString) {
         this.myString = myString;
         return this;
     }

@@ -15,7 +15,7 @@ public class ${className}Builder {
 {/EACH}        return instance;
     }
 {EACH members}
-    public ${className}Builder with${name}(final ${type} ${name}) {
+    public ${className}Builder with${u_name}(final ${type} ${name}) {
         this.${name} = ${name};
         return this;
     }

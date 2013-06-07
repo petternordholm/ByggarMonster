@@ -16,12 +16,12 @@ public class TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder
         return instance;
     }
 
-    public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder withmyInt(final int myInt) {
+    public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder withMyInt(final int myInt) {
         this.myInt = myInt;
         return this;
     }
 
-    public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder withmyString(final String myString) {
+    public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder withMyString(final String myString) {
         this.myString = myString;
         return this;
     }

@@ -16,12 +16,12 @@ public class TwoFinalAttributesSrcBuilder {
         return instance;
     }
 
-    public TwoFinalAttributesSrcBuilder withmyInt(final int myInt) {
+    public TwoFinalAttributesSrcBuilder withMyInt(final int myInt) {
         this.myInt = myInt;
         return this;
     }
 
-    public TwoFinalAttributesSrcBuilder withmyString(final String myString) {
+    public TwoFinalAttributesSrcBuilder withMyString(final String myString) {
         this.myString = myString;
         return this;
     }

@@ -79,10 +79,19 @@ public class TemplateHelper {
 		final Matcher m = p.matcher(template);
 		while (m.find()) {
 			final String regionString = m.group(0);
-			final String variableName = m.group(1);
-			final String value = (String) context.get(variableName);
+			String variableName = m.group(1);
+			boolean ucFirst = false;
+			if (variableName.startsWith("u_")) {
+				ucFirst = true;
+				variableName = variableName.substring(2);
+			}
+			String value = (String) context.get(variableName);
 			if (value == null)
 				continue;
+			if (ucFirst) {
+				value = value.toUpperCase().substring(0, 1)
+				        + value.substring(1);
+			}
 			renderedTemplate = renderTemplate(renderedTemplate, regionString,
 			        value);
 		}

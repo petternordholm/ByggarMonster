@@ -18,12 +18,12 @@ public class TwoAttributesConstructorParametersAndSettersSrcBuilder {
         return instance;
     }
 
-    public TwoAttributesConstructorParametersAndSettersSrcBuilder withmyInt(final int myInt) {
+    public TwoAttributesConstructorParametersAndSettersSrcBuilder withMyInt(final int myInt) {
         this.myInt = myInt;
         return this;
     }
 
-    public TwoAttributesConstructorParametersAndSettersSrcBuilder withmyString(final String myString) {
+    public TwoAttributesConstructorParametersAndSettersSrcBuilder withMyString(final String myString) {
         this.myString = myString;
         return this;
     }

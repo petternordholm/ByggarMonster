@@ -17,12 +17,12 @@ public class TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder {
         return instance;
     }
 
-    public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder withmyInt(final int myInt) {
+    public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder withMyInt(final int myInt) {
         this.myInt = myInt;
         return this;
     }
 
-    public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder withmyString(final String myString) {
+    public TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder withMyString(final String myString) {
         this.myString = myString;
         return this;
     }
