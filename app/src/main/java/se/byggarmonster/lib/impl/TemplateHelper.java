@@ -17,6 +17,7 @@ public class TemplateHelper {
 		return template;
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	private static String renderEach(final String template,
 	        final Map<String, Object> context) {
 		String renderedTemplate = new String(template);
