@@ -12,9 +12,9 @@ public class ByggarMonsterAPI {
 	private final String source;
 	private final String templatePath;
 
-	public ByggarMonsterAPI(final String source, final String templatePath) {
+	public ByggarMonsterAPI(final String source, final String template) {
 		this.source = source;
-		this.templatePath = templatePath;
+		this.templatePath = template;
 	}
 
 	public String getSource() {

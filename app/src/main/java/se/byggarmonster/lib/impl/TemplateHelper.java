@@ -2,29 +2,19 @@ package se.byggarmonster.lib.impl;
 
 import static java.util.regex.Matcher.quoteReplacement;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
-import com.google.common.io.Files;
 
 public class TemplateHelper {
-	public static String render(final String templateFile,
+	public static String render(String template,
 	        final Map<String, Object> context) {
-		String template;
-		try {
-			template = Files.toString(new File(templateFile), Charsets.UTF_8);
-			template = renderVariables(template, context);
-			template = renderEach(template, context);
-			return template;
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
+		template = renderVariables(template, context);
+		template = renderEach(template, context);
+		return template;
 	}
 
 	private static String renderEach(final String template,

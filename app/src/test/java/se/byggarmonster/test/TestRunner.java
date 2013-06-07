@@ -11,7 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 
-import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
+import se.byggarmonster.main.Main;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
@@ -52,22 +52,16 @@ public class TestRunner {
 	}
 
 	protected void testBuilder(final List<String> sourceFiles,
-	        final String template, final ResultInspector resultInspector)
+	        final String templateFile, final ResultInspector resultInspector)
 	        throws IOException {
 		for (final String sourceFile : sourceFiles) {
 			System.out.println("Testing " + sourceFile);
 			final String assertedFile = sourceFile.substring(0,
 			        sourceFile.length() - SRC_JAVA.length())
 			        + ASSERTED_JAVA;
-			final String source = Files.toString(new File(sourceFile),
-			        Charsets.UTF_8);
 			final Optional<String> asserted = getContentIfExists(assertedFile);
-			final String actual = new ByggarMonsterAPIBuilder() //
-			        .withSource(source) //
-			        .withTemplate(template) //
-			        .build() //
-			        .toString();
-			resultInspector.inspect(sourceFile, asserted, actual);
+			resultInspector.inspect(sourceFile, asserted,
+			        usingMain(sourceFile, templateFile));
 		}
 	}
 
@@ -126,5 +120,11 @@ public class TestRunner {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private String usingMain(final String source, final String template) {
+		return Main
+		        .doMain(("java -source " + source + " -template " + template)
+		                .split(" "));
 	}
 }
