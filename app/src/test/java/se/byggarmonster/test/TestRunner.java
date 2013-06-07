@@ -7,6 +7,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Test;
@@ -79,13 +80,50 @@ public class TestRunner {
 		}
 	}
 
-	public void testImplemented(final String name) throws IOException {
+	public void testImplemented(final String template) throws IOException {
+		final String templatePath = SRC_TEST_RESOURCES + "/" + template
+		        + ".txt";
+
+		/**
+		 * Generate one file at a time.
+		 */
 		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES
-		        + "/se/byggarmonster/test/" + name, SRC_JAVA);
-		assertTrue("There should be at least one test for the builder, " + name
-		        + ".", sourceFiles.size() > 0);
-		testBuilder(sourceFiles, SRC_TEST_RESOURCES + "/" + name + ".txt",
-		        implementedResultInspector);
+		        + "/se/byggarmonster/test/" + template, SRC_JAVA);
+		assertTrue("There should be at least one test for the builder, "
+		        + template + ".", sourceFiles.size() > 0);
+		testBuilder(sourceFiles, templatePath, implementedResultInspector);
+
+		/**
+		 * Generate all files in a package.
+		 */
+		if (1 + 1 == 2)
+			return; // TODO: This will test the package / outputFolder -feature
+		Main.main(("java " + Main.PARAM_PACKAGE + " se.byggarmonster.test "
+		        + Main.PARAM_OUTPUTFOLDER + " target/generated "
+		        + Main.PARAM_TEMPLATE + " " + templatePath).split(" "));
+		final List<String> assertedFiles = getAllFiles(SRC_TEST_RESOURCES
+		        + "/se/byggarmonster/test/" + template, ASSERTED_JAVA);
+		final List<String> generatedFiles = getAllFiles("target/generated"
+		        + "/se/byggarmonster/test/" + template, ASSERTED_JAVA);
+		final Iterator<String> assertedItr = assertedFiles.iterator();
+		final Iterator<String> generatedItr = generatedFiles.iterator();
+		while (assertedItr.hasNext()) {
+			final String assertedPath = assertedItr.next();
+			if (!generatedItr.hasNext())
+				fail("Can not find generated file from " + assertedPath);
+			final String generatedPath = generatedItr.next();
+			if (!getContentIfExists(assertedPath).isPresent())
+				fail("Can not read " + assertedPath);
+			if (!getContentIfExists(generatedPath).isPresent())
+				fail("Can not read " + generatedPath);
+			final String assertedContent = getContentIfExists(assertedPath)
+			        .get();
+			final String generatedContent = getContentIfExists(generatedPath)
+			        .get();
+			assertEquals(assertedPath + " != " + generatedPath, //
+			        assertedContent, //
+			        generatedContent);
+		}
 	}
 
 	@Test

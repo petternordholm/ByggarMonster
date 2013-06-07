@@ -1,6 +1,5 @@
 package se.byggarmonster.main;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -14,6 +13,8 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 public class Main {
+	public static final String PARAM_OUTPUTFOLDER = "-outputFolder";
+	public static final String PARAM_PACKAGE = "-package";
 	public static final String PARAM_SOURCE = "-source";
 	public static final String PARAM_TEMPLATE = "-template";
 
@@ -32,23 +33,34 @@ public class Main {
 	}
 
 	public static String doMain(final String[] args) {
-		final Map<String, String> argsMap = parsArgs(args);
+		final Params argsMap = new Params(parsArgs(args));
 
-		checkNotNull(PARAM_SOURCE + " must be defined",
-		        argsMap.get(PARAM_SOURCE));
-		final String sourcePath = argsMap.get(PARAM_SOURCE);
-		checkFileExists(sourcePath);
+		checkState(
+		        argsMap.get(PARAM_SOURCE).isPresent()
+		                || argsMap.get(PARAM_OUTPUTFOLDER).isPresent()
+		                && argsMap.get(PARAM_PACKAGE).isPresent(), PARAM_SOURCE
+		                + " or " + PARAM_PACKAGE + " and " + PARAM_OUTPUTFOLDER
+		                + " must be defined");
 
-		checkNotNull(PARAM_TEMPLATE + " must be defined",
-		        argsMap.get(PARAM_TEMPLATE));
-		final String templatePath = argsMap.get(PARAM_TEMPLATE);
+		checkState(argsMap.get(PARAM_TEMPLATE).isPresent(), PARAM_TEMPLATE
+		        + " must be defined");
+		final String templatePath = argsMap.get(PARAM_TEMPLATE).get();
 		checkFileExists(templatePath);
 
-		return new ByggarMonsterAPIBuilder() //
-		        .withSource(content(sourcePath)) //
-		        .withTemplate(content(templatePath)) //
-		        .build() //
-		        .toString();
+		if (argsMap.get(PARAM_SOURCE).isPresent()) {
+			final String sourcePath = argsMap.get(PARAM_SOURCE).get();
+			checkFileExists(sourcePath);
+
+			return new ByggarMonsterAPIBuilder() //
+			        .withSource(content(sourcePath)) //
+			        .withTemplate(content(templatePath)) //
+			        .build() //
+			        .toString();
+		} else {
+			// TODO: use package and output folder
+		}
+
+		return "";
 	}
 
 	public static void main(final String[] args) {
