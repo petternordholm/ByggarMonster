@@ -23,13 +23,15 @@ import se.byggarmonster.lib.parser.JavaParser.MethodBodyContext;
 import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 
+import com.google.common.base.Optional;
+
 public class BuilderPatternGenerator extends JavaBaseListener {
 	private String className;
 	/**
 	 * Name => Type
 	 */
 	private final LinkedList<NameTypePair> constructorParameters;
-	private final HashMap<String, String> getterMapping;
+	private final Map<String, String> getterMapping;
 	/**
 	 * Constructor parameter => member attribute
 	 */
@@ -37,12 +39,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	/**
 	 * Name => Type
 	 */
-	private final ArrayList<NameTypePair> members;
+	private final List<NameTypePair> members;
 	private String packageName;
 	/**
 	 * Setter => type
 	 */
-	private final HashMap<String, String> setterMapping;
+	private final Map<String, String> setterMapping;
 
 	public BuilderPatternGenerator() {
 		constructorParameters = new LinkedList<NameTypePair>();
@@ -92,12 +94,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			                .getName());
 		}
 
-		final String returnMember = findReturnInBlocks(ctx.block()
+		final Optional<String> returnMember = findReturnInBlocks(ctx.block()
 		        .blockStatement());
-		if (returnMember != null) {
+		if (returnMember.isPresent()) {
 			getterMapping.put(
 			        ctx.getParent().getParent().getChild(0).getText(),
-			        returnMember);
+			        returnMember.get());
 		}
 	}
 
@@ -132,13 +134,14 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return foundMappings;
 	}
 
-	private String findReturnInBlocks(final List<BlockStatementContext> blocks) {
+	private Optional<String> findReturnInBlocks(
+	        final List<BlockStatementContext> blocks) {
 		for (final BlockStatementContext bsc : blocks) {
 			if (bsc.statement().expression().size() > 0)
-				return bsc.statement().expression().get(0).getChild(0)
-				        .getText();
+				return Optional.of(bsc.statement().expression().get(0)
+				        .getChild(0).getText());
 		}
-		return null;
+		return Optional.absent();
 	}
 
 	private NameTypePair getMember(final String name) {
@@ -187,7 +190,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return TemplateHelper.render(templatePath, context);
 	}
 
-	private List<Map<String, Object>> toList(final HashMap<String, String> map) {
+	private List<Map<String, Object>> toList(final Map<String, String> map) {
 		final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
 		for (final String key : map.keySet()) {
 			final Map<String, Object> variables = new HashMap<String, Object>();

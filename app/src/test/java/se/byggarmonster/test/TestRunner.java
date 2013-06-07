@@ -14,6 +14,7 @@ import org.junit.Test;
 import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Optional;
 import com.google.common.io.Files;
 
 public class TestRunner {
@@ -26,16 +27,18 @@ public class TestRunner {
 	public static final String SRC_TEST_RESOURCES = "src/resources/templates";
 
 	public List<String> getAllFiles(final String folder, final String ending) {
-		final ArrayList<String> files = new ArrayList<String>();
-		final File[] faFiles = new File(folder).listFiles();
-		for (final File file : faFiles) {
-			if (file.getName().endsWith(ending)) {
-				files.add(file.getAbsolutePath());
+		final List<String> files = new ArrayList<String>();
+		final Optional<File[]> faFiles = Optional.fromNullable(new File(folder)
+		        .listFiles());
+		if (faFiles.isPresent())
+			for (final File file : faFiles.get()) {
+				if (file.getName().endsWith(ending)) {
+					files.add(file.getAbsolutePath());
+				}
+				if (file.isDirectory()) {
+					files.addAll(getAllFiles(file.getAbsolutePath(), ending));
+				}
 			}
-			if (file.isDirectory()) {
-				files.addAll(getAllFiles(file.getAbsolutePath(), ending));
-			}
-		}
 		return files;
 	}
 
