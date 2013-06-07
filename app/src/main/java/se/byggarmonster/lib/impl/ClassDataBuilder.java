@@ -1,40 +1,28 @@
 package se.byggarmonster.lib.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import se.byggarmonster.lib.impl.data.MemberMapping;
+import se.byggarmonster.lib.impl.data.MethodMapping;
 
 public class ClassDataBuilder {
 	private String className;
-
-	/**
-	 * Name => Type
-	 */
 	private final LinkedList<NameTypePair> constructorParameters;
-	private final Map<String, String> getterMapping;
+	private final MethodMapping getterMapping;
 	private final MemberMapping memberMapping;
-	/**
-	 * Name => Type
-	 */
 	private final List<NameTypePair> members;
-
 	private String packageName;
-
-	/**
-	 * Setter => type
-	 */
-	private final Map<String, String> setterMapping;
+	private final MethodMapping setterMapping;
 
 	public ClassDataBuilder() {
 		constructorParameters = new LinkedList<NameTypePair>();
 		members = new ArrayList<NameTypePair>();
 		memberMapping = new MemberMapping();
-		setterMapping = new HashMap<String, String>();
-		getterMapping = new HashMap<String, String>();
+		setterMapping = new MethodMapping();
+		getterMapping = new MethodMapping();
 	}
 
 	public ClassData build() {
@@ -55,7 +43,7 @@ public class ClassDataBuilder {
 
 	public ClassDataBuilder withGetterMapping(final String text,
 	        final String string) {
-		getterMapping.put(text, string);
+		getterMapping.include(text, string);
 		return this;
 	}
 
@@ -77,7 +65,7 @@ public class ClassDataBuilder {
 
 	public ClassDataBuilder withSetterMapping(final String text,
 	        final String name) {
-		setterMapping.put(text, name);
+		setterMapping.include(text, name);
 		return this;
 	}
 }

@@ -1,25 +1,24 @@
 package se.byggarmonster.lib.impl;
 
 import java.util.List;
-import java.util.Map;
 
 import se.byggarmonster.lib.impl.data.MemberMapping;
+import se.byggarmonster.lib.impl.data.MethodMapping;
 
 public class ClassData {
 	private final String className;
 	private final List<NameTypePair> constructorParameters;
-	private final Map<String, String> getterMapping;
+	private final MethodMapping getterMapping;
 	private final MemberMapping memberMapping;
 	private final List<NameTypePair> members;
 	private final String packageName;
-	private final Map<String, String> setterMapping;
+	private final MethodMapping setterMapping;
 
 	public ClassData(final String className, final String packageName,
 	        final List<NameTypePair> constructorParameters,
 	        final List<NameTypePair> members,
 	        final MemberMapping memberMapping2,
-	        final Map<String, String> setterMapping,
-	        final Map<String, String> getterMapping) {
+	        final MethodMapping setterMapping, final MethodMapping getterMapping) {
 		this.className = className;
 		this.packageName = packageName;
 		this.constructorParameters = constructorParameters;
@@ -37,7 +36,7 @@ public class ClassData {
 		return constructorParameters;
 	}
 
-	public Map<String, String> getGetterMapping() {
+	public MethodMapping getGetterMapping() {
 		return getterMapping;
 	}
 
@@ -53,7 +52,7 @@ public class ClassData {
 		return packageName;
 	}
 
-	public Map<String, String> getSetterMapping() {
+	public MethodMapping getSetterMapping() {
 		return setterMapping;
 	}
 }

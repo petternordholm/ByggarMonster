@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import se.byggarmonster.lib.impl.data.MethodMapping;
 import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaParser.BlockStatementContext;
 import se.byggarmonster.lib.parser.JavaParser.ConstructorBodyContext;
@@ -167,12 +168,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return TemplateHelper.render(templatePath, context);
 	}
 
-	private List<Map<String, Object>> toList(final Map<String, String> map) {
+	private List<Map<String, Object>> toList(final MethodMapping map) {
 		final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		for (final String key : map.keySet()) {
+		for (final String key : map.getMethods()) {
 			final Map<String, Object> variables = new HashMap<String, Object>();
 			variables.put("key", key);
-			variables.put("value", map.get(key));
+			variables.put("value", map.getAttribute(key));
 			list.add(variables);
 		}
 		return list;
