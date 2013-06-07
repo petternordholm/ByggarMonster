@@ -14,6 +14,9 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 
 public class Main {
+	public static final String PARAM_SOURCE = "-source";
+	public static final String PARAM_TEMPLATE = "-template";
+
 	private static void checkFileExists(final String filePath) {
 		checkState(new File(filePath).exists(),
 		        new File(filePath).getAbsolutePath() + " does not exist.");
@@ -31,12 +34,14 @@ public class Main {
 	public static String doMain(final String[] args) {
 		final Map<String, String> argsMap = parsArgs(args);
 
-		checkNotNull("-source must be defined", argsMap.get("-source"));
-		final String sourcePath = argsMap.get("-source");
+		checkNotNull(PARAM_SOURCE + " must be defined",
+		        argsMap.get(PARAM_SOURCE));
+		final String sourcePath = argsMap.get(PARAM_SOURCE);
 		checkFileExists(sourcePath);
 
-		checkNotNull("-template must be defined", argsMap.get("-template"));
-		final String templatePath = argsMap.get("-template");
+		checkNotNull(PARAM_TEMPLATE + " must be defined",
+		        argsMap.get(PARAM_TEMPLATE));
+		final String templatePath = argsMap.get(PARAM_TEMPLATE);
 		checkFileExists(templatePath);
 
 		return new ByggarMonsterAPIBuilder() //

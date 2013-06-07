@@ -55,15 +55,20 @@ public class TestRunner {
 	        final String templateFile, final ResultInspector resultInspector)
 	        throws IOException {
 		for (final String sourceFile : sourceFiles) {
-			System.out.println("Testing " + sourceFile);
-			final String assertedFile = sourceFile.substring(0,
-			        sourceFile.length() - SRC_JAVA.length())
-			        + ASSERTED_JAVA;
-			final Optional<String> asserted = getContentIfExists(assertedFile);
-			resultInspector.inspect(sourceFile, asserted,
-			        usingMain(sourceFile, templateFile));
+			testSourceFile(templateFile, resultInspector, sourceFile);
 		}
 	}
+
+	private void testSourceFile(final String templateFile,
+            final ResultInspector resultInspector, final String sourceFile) {
+	    System.out.println("Testing " + sourceFile);
+	    final String assertedFile = sourceFile.substring(0,
+	            sourceFile.length() - SRC_JAVA.length())
+	            + ASSERTED_JAVA;
+	    final Optional<String> asserted = getContentIfExists(assertedFile);
+	    resultInspector.inspect(sourceFile, asserted,
+	            usingMain(sourceFile, templateFile));
+    }
 
 	public void testImplemented(final String name) throws IOException {
 		final List<String> sourceFiles = getAllFiles(SRC_TEST_RESOURCES
@@ -123,8 +128,7 @@ public class TestRunner {
 	}
 
 	private String usingMain(final String source, final String template) {
-		return Main
-		        .doMain(("java -source " + source + " -template " + template)
-		                .split(" "));
+		return Main.doMain(("java " + Main.PARAM_SOURCE + " " + source + " "
+		        + Main.PARAM_TEMPLATE + " " + template).split(" "));
 	}
 }
