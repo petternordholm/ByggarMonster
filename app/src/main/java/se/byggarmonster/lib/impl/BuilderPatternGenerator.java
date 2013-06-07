@@ -15,6 +15,7 @@ import se.byggarmonster.lib.parser.JavaParser.ExpressionContext;
 import se.byggarmonster.lib.parser.JavaParser.FieldDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
 import se.byggarmonster.lib.parser.JavaParser.MemberDeclarationContext;
+import se.byggarmonster.lib.parser.JavaParser.MethodBodyContext;
 import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
 
@@ -42,14 +43,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 
 	@Override
 	public void exitConstructorBody(final ConstructorBodyContext ctx) {
-		for (final BlockStatementContext bsc : ctx.blockStatement()) {
-			final ExpressionContext exprContext = bsc.statement()
-			        .statementExpression().expression();
-			final String memberName = removeThis(exprContext.getChild(0)
-			        .getText());
-			final String constructorName = exprContext.getChild(2).getText();
-			memberMapping.put(constructorName, memberName);
-		}
+		findMemberMappingsInBlocks(ctx.blockStatement());
 	}
 
 	/**
@@ -75,6 +69,11 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	}
 
 	@Override
+	public void exitMethodBody(final MethodBodyContext ctx) {
+		findMemberMappingsInBlocks(ctx.block().blockStatement());
+	}
+
+	@Override
 	public void exitNormalClassDeclaration(
 	        final NormalClassDeclarationContext ctx) {
 		this.className = ctx.Identifier().getText();
@@ -86,6 +85,20 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	@Override
 	public void exitQualifiedName(final QualifiedNameContext ctx) {
 		this.packageName = ctx.getText();
+	}
+
+	private void findMemberMappingsInBlocks(
+	        final List<BlockStatementContext> blocks) {
+		for (final BlockStatementContext bsc : blocks) {
+			if (bsc.statement().statementExpression() == null)
+				continue;
+			final ExpressionContext exprContext = bsc.statement()
+			        .statementExpression().expression();
+			final String memberName = removeThis(exprContext.getChild(0)
+			        .getText());
+			final String constructorName = exprContext.getChild(2).getText();
+			memberMapping.put(constructorName, memberName);
+		}
 	}
 
 	public String getClassName() {
