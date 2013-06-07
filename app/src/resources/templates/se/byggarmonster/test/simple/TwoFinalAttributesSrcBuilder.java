@@ -5,7 +5,8 @@ public class TwoFinalAttributesSrcBuilder {
     private String myString;
 
     public TwoFinalAttributesSrc build() {
-        return new TwoFinalAttributesSrc(myInt, myString);
+        TwoFinalAttributesSrc instance = new TwoFinalAttributesSrc(myInt, myString);
+        return instance;
     }
 
     public TwoFinalAttributesSrcBuilder withmyInt(final int myInt) {

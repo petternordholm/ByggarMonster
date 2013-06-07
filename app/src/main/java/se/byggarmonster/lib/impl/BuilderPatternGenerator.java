@@ -8,9 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.antlr.v4.runtime.ParserRuleContext;
+
 import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaParser.BlockStatementContext;
 import se.byggarmonster.lib.parser.JavaParser.ConstructorBodyContext;
+import se.byggarmonster.lib.parser.JavaParser.ConstructorDeclaratorRestContext;
 import se.byggarmonster.lib.parser.JavaParser.ExpressionContext;
 import se.byggarmonster.lib.parser.JavaParser.FieldDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
@@ -58,10 +61,11 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	@Override
 	public void exitFormalParameterDeclsRest(
 	        final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
-		constructorParameters.addFirst(new NameTypePair(ctx
-		        .variableDeclaratorId().getText(),
-		        ((FormalParameterDeclsContext) ctx.getParent()).type()
-		                .getText()));
+		if (hasParent(ctx, ConstructorDeclaratorRestContext.class))
+			constructorParameters.addFirst(new NameTypePair(ctx
+			        .variableDeclaratorId().getText(),
+			        ((FormalParameterDeclsContext) ctx.getParent()).type()
+			                .getText()));
 	}
 
 	@Override
@@ -83,7 +87,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			        .getParent().getParent();
 			setterMapping.put(memberDeclContext.Identifier().getText(),
 			        getMember(foundMappings.values().iterator().next())
-			                .getType());
+			                .getName());
 		}
 	}
 
@@ -118,14 +122,6 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return foundMappings;
 	}
 
-	public String getClassName() {
-		return className;
-	}
-
-	public List<NameTypePair> getConstructorParameters() {
-		return constructorParameters;
-	}
-
 	private NameTypePair getMember(final String name) {
 		for (final NameTypePair p : members)
 			if (p.getName().equals(name))
@@ -133,12 +129,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		throw new RuntimeException(name + " not found");
 	}
 
-	public List<NameTypePair> getMembers() {
-		return members;
-	}
-
-	public String getPackageName() {
-		return packageName;
+	private boolean hasParent(final ParserRuleContext ctx, final Class<?> clazz) {
+		if (ctx.getParent() == null)
+			return false;
+		if (ctx.getParent().getClass().equals(clazz))
+			return true;
+		return hasParent(ctx.getParent(), clazz);
 	}
 
 	private List<NameTypePair> mapToMembers(final List<NameTypePair> pairs) {
@@ -162,12 +158,24 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 
 	public String render(final String templatePath) {
 		final Map<String, Object> context = new HashMap<String, Object>();
-		context.put("packageName", checkNotNull(getPackageName()));
-		context.put("className", checkNotNull(getClassName()));
-		context.put("members", toListOfNameTypeMap(getMembers()));
+		context.put("packageName", checkNotNull(packageName));
+		context.put("className", checkNotNull(className));
+		context.put("members", toListOfNameTypeMap(members));
 		context.put("constructorParameters",
-		        toListOfNameTypeMap(mapToMembers(getConstructorParameters())));
+		        toListOfNameTypeMap(mapToMembers(constructorParameters)));
+		context.put("setters", toList(setterMapping));
 		return TemplateHelper.render(templatePath, context);
+	}
+
+	private List<Map<String, Object>> toList(final HashMap<String, String> map) {
+		final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+		for (final String key : map.keySet()) {
+			final Map<String, Object> variables = new HashMap<String, Object>();
+			variables.put("key", key);
+			variables.put("value", map.get(key));
+			list.add(variables);
+		}
+		return list;
 	}
 
 	private List<Map<String, Object>> toListOfNameTypeMap(

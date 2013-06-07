@@ -1,4 +1,4 @@
-package se.byggarmonster.test.unimplemented.simple;
+package se.byggarmonster.test.simple;
 
 public class TwoFinalAttributesOneParamInConstructorOneSetterSrc {
 	private int myInt;

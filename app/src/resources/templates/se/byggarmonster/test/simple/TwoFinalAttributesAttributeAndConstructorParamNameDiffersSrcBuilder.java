@@ -5,7 +5,8 @@ public class TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder
     private String myString;
 
     public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc build() {
-        return new TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc(myString, myInt);
+        TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc instance = new TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrc(myString, myInt);
+        return instance;
     }
 
     public TwoFinalAttributesAttributeAndConstructorParamNameDiffersSrcBuilder withmyInt(final int myInt) {

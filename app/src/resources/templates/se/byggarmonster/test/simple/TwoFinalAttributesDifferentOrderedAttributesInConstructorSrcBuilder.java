@@ -5,7 +5,8 @@ public class TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder
     private String myString;
 
     public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc build() {
-        return new TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc(myString, myInt);
+        TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc instance = new TwoFinalAttributesDifferentOrderedAttributesInConstructorSrc(myString, myInt);
+        return instance;
     }
 
     public TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder withmyInt(final int myInt) {

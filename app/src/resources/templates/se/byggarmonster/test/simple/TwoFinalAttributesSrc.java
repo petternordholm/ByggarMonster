@@ -1,5 +1,6 @@
 package se.byggarmonster.test.simple;
 
+
 public class TwoFinalAttributesSrc {
 	private final int myInt;
 	private final String myString;

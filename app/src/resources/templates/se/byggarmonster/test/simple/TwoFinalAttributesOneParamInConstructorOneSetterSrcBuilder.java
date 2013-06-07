@@ -1,11 +1,11 @@
-package se.byggarmonster.test.unimplemented.simple;
+package se.byggarmonster.test.simple;
 
 public class TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder {
     private int myInt;
     private String myString;
 
     public TwoFinalAttributesOneParamInConstructorOneSetterSrc build() {
-    	TwoFinalAttributesOneParamInConstructorOneSetterSrc instance = new TwoFinalAttributesOneParamInConstructorOneSetterSrc(myString);
+        TwoFinalAttributesOneParamInConstructorOneSetterSrc instance = new TwoFinalAttributesOneParamInConstructorOneSetterSrc(myString);
         instance.setMyInt(myInt);
         return instance;
     }
