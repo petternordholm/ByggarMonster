@@ -3,14 +3,10 @@ package se.byggarmonster.main;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
-
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
 
 public class Main {
 	public static final String OPTION_STDOUT = "stdout";
@@ -19,24 +15,8 @@ public class Main {
 	public static final String PARAM_SOURCE = "-source";
 	public static final String PARAM_TEMPLATE = "-template";
 
-	private static void checkFileExists(final String filePath) {
-		checkState(new File(filePath).exists(),
-		        new File(filePath).getAbsolutePath() + " does not exist.");
-	}
-
-	private static String content(final String path) {
-		try {
-			return Files.toString(new File(path), Charsets.UTF_8);
-		} catch (final IOException e) {
-			throw new RuntimeException("Can not read file "
-			        + new File(path).getAbsoluteFile());
-		}
-	}
-
 	public static String doMain(final String[] args) {
 		final Params params = new Params(parsArgs(args));
-		String output = "";
-
 		checkState(
 		        params.get(PARAM_OUTPUT).isPresent()
 		                && (params.get(PARAM_SOURCE).isPresent()//
@@ -47,25 +27,21 @@ public class Main {
 		checkState(params.get(PARAM_TEMPLATE).isPresent(), PARAM_TEMPLATE
 		        + " must be defined");
 		final String templatePath = params.get(PARAM_TEMPLATE).get();
-		checkFileExists(templatePath);
+
+		ByggarMonsterAPIBuilder byggarMonsterAPIBuilder = new ByggarMonsterAPIBuilder()
+		        .withTemplateFile(templatePath);
 
 		if (params.get(PARAM_SOURCE).isPresent()) {
 			final String sourcePath = params.get(PARAM_SOURCE).get();
-			checkFileExists(sourcePath);
-
-			output = new ByggarMonsterAPIBuilder() //
-			        .withSource(content(sourcePath)) //
-			        .withTemplate(content(templatePath)) //
-			        .build() //
-			        .toString();
-
+			byggarMonsterAPIBuilder = byggarMonsterAPIBuilder
+			        .withSourceFile(sourcePath);
 			if (notStdout(params)) {
-				writeToFile(output, params.get(PARAM_OUTPUT).get());
+				byggarMonsterAPIBuilder.toFile(params.get(PARAM_OUTPUT).get());
 				return "Wrote "
 				        + new File(params.get(PARAM_OUTPUT).get())
 				                .getAbsoluteFile();
 			} else
-				return output;
+				return byggarMonsterAPIBuilder.toString();
 		} else {
 			// TODO: use package and output folder
 		}
@@ -90,15 +66,5 @@ public class Main {
 			}
 		}
 		return map;
-	}
-
-	private static void writeToFile(final String output,
-	        final String outputFilePath) {
-		try {
-			Files.write(output.getBytes(), new File(outputFilePath));
-		} catch (final IOException e) {
-			System.err.println("Could not write to "
-			        + new File(outputFilePath).getAbsoluteFile());
-		}
 	}
 }
