@@ -8,7 +8,7 @@ import se.byggarmonster.lib.impl.BuilderPatternGenerator;
 import se.byggarmonster.lib.parser.JavaLexer;
 import se.byggarmonster.lib.parser.JavaParser;
 
-public class ByggarMonsterAPI {
+class ByggarMonsterAPI {
 	private final String source;
 	private final String templatePath;
 
