@@ -3,6 +3,10 @@
 Name translates to Builder Pattern. This software will parse your POJO:s and create builders for them.
 
 ## Example ##
+Template: https://github.com/tomasbjerre/ByggarMonster/blob/master/app/src/resources/templates/simple.txt
+
+Generated builders: https://github.com/tomasbjerre/ByggarMonster/tree/master/app/src/resources/templates/se/byggarmonster/test/simple
+
 This software will parse pure data objects, like:
 
     public class TwoFinalAttributesSrc {
