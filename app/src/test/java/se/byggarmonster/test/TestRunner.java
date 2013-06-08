@@ -99,7 +99,7 @@ public class TestRunner {
 		if (1 + 1 == 2)
 			return; // TODO: This will test the package / outputFolder -feature
 		Main.main(("java " + Main.PARAM_PACKAGE + " se.byggarmonster.test "
-		        + Main.PARAM_OUTPUTFOLDER + " target/generated "
+		        + Main.PARAM_OUTPUT + " target/generated "
 		        + Main.PARAM_TEMPLATE + " " + templatePath).split(" "));
 		final List<String> assertedFiles = getAllFiles(SRC_TEST_RESOURCES
 		        + "/se/byggarmonster/test/" + template, ASSERTED_JAVA);
@@ -164,7 +164,31 @@ public class TestRunner {
 	}
 
 	private String usingMain(final String source, final String template) {
-		return Main.doMain(("java " + Main.PARAM_SOURCE + " " + source + " "
-		        + Main.PARAM_TEMPLATE + " " + template).split(" "));
+		/**
+		 * Use STDOUT
+		 */
+		final String output = Main.doMain(("java " //
+		        + Main.PARAM_SOURCE + " " + source + " " //
+		        + Main.PARAM_TEMPLATE + " " + template + " " //
+		        + Main.PARAM_OUTPUT + " " + Main.OPTION_STDOUT //
+		        ).split(" "));
+
+		/**
+		 * Use file output
+		 */
+		final String tempFilePath = "tempfile.java";
+		Main.doMain(("java " //
+		        + Main.PARAM_SOURCE + " " + source + " " //
+		        + Main.PARAM_TEMPLATE + " " + template + " " //
+		        + Main.PARAM_OUTPUT + " " + tempFilePath //
+		).split(" "));
+		final String tempFileContent = getContentIfExists(tempFilePath).get();
+		new File(tempFilePath).delete();
+
+		assertEquals("Expected output from " + Main.OPTION_STDOUT
+		        + " to be same as file output content.", output,
+		        tempFileContent);
+
+		return output;
 	}
 }
