@@ -1,5 +1,6 @@
 package se.byggarmonster.lib;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
@@ -43,6 +44,7 @@ public class ByggarMonsterAPIBuilder {
 	}
 
 	public ByggarMonsterAPIBuilder withSourceContent(final String source) {
+		checkNotNull(source, "Parameter can not be null.");
 		this.source = source;
 		return this;
 	}
@@ -52,6 +54,7 @@ public class ByggarMonsterAPIBuilder {
 	}
 
 	public ByggarMonsterAPIBuilder withTemplateContent(final String template) {
+		checkNotNull(template, "Parameter can not be null.");
 		this.template = template;
 		return this;
 	}
