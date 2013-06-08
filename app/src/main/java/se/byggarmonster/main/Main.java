@@ -59,20 +59,18 @@ public class Main {
 			        .build() //
 			        .toString();
 
-			if (notStdout(params))
-				try {
-					Files.write(output.getBytes(),
-					        new File(params.get(PARAM_OUTPUT).get()));
-				} catch (final IOException e) {
-					System.err.println("Could not write to "
-					        + new File(params.get(PARAM_OUTPUT).get())
-					                .getAbsoluteFile());
-				}
+			if (notStdout(params)) {
+				writeToFile(output, params.get(PARAM_OUTPUT).get());
+				return "Wrote "
+				        + new File(params.get(PARAM_OUTPUT).get())
+				                .getAbsoluteFile();
+			} else
+				return output;
 		} else {
 			// TODO: use package and output folder
 		}
 
-		return output;
+		throw new RuntimeException("Did not understand input parameters.");
 	}
 
 	public static void main(final String[] args) {
@@ -92,5 +90,15 @@ public class Main {
 			}
 		}
 		return map;
+	}
+
+	private static void writeToFile(final String output,
+	        final String outputFilePath) {
+		try {
+			Files.write(output.getBytes(), new File(outputFilePath));
+		} catch (final IOException e) {
+			System.err.println("Could not write to "
+			        + new File(outputFilePath).getAbsoluteFile());
+		}
 	}
 }

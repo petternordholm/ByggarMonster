@@ -177,13 +177,15 @@ public class TestRunner {
 		 * Use file output
 		 */
 		final String tempFilePath = "tempfile.java";
-		Main.doMain(("java " //
+		final String fileStdout = Main.doMain(("java " //
 		        + Main.PARAM_SOURCE + " " + source + " " //
 		        + Main.PARAM_TEMPLATE + " " + template + " " //
 		        + Main.PARAM_OUTPUT + " " + tempFilePath //
-		).split(" "));
+		        ).split(" "));
 		final String tempFileContent = getContentIfExists(tempFilePath).get();
 		new File(tempFilePath).delete();
+		assertEquals("Unexpected output using file creation option.", "Wrote "
+		        + new File(tempFilePath).getAbsoluteFile(), fileStdout);
 
 		assertEquals("Expected output from " + Main.OPTION_STDOUT
 		        + " to be same as file output content.", output,
