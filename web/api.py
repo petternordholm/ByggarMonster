@@ -21,8 +21,8 @@ if input_base64 != None:
     print("")
     print("")
     base64.b64decode(input_base64) #Validate base64 before doing command below
-    jar = "/home/bjerre/sites/byggarmonster/ByggarMonster/lib/target/byggarmonster-0.1-SNAPSHOT-jar-with-dependencies.jar"
-    template = "/home/bjerre/sites/byggarmonster/ByggarMonster/lib/src/resources/templates/simple.txt"
+    jar = "../lib/target/byggarmonster-0.1-SNAPSHOT-jar-with-dependencies.jar"
+    template = "../lib/src/resources/templates/simple.txt"
     command_string = "java -jar "+jar+" -source %s -output STDOUT -template %s" % (input_base64, template)
     #print(command_string)
     output = commands.getstatusoutput(command_string)[1]
