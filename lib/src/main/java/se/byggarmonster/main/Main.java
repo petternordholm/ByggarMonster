@@ -11,7 +11,7 @@ import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
 import com.google.common.io.BaseEncoding;
 
 public class Main {
-	public static final String OPTION_STDOUT = "stdout";
+	public static final String OPTION_STDOUT = "STDOUT";
 	public static final String PARAM_OUTPUT = "-output";
 	public static final String PARAM_PACKAGE = "-package";
 	public static final String PARAM_SOURCE = "-source";
