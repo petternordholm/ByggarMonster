@@ -8,7 +8,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
   <version>0.1-SNAPSHOT</version>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+    <maven.compiler.target>1.6</maven.compiler.target>
+    <maven.compiler.source>1.6</maven.compiler.source>
+  </properties> 
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -17,9 +19,9 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
       <scope>test</scope>
     </dependency>
     <dependency>
-	  <groupId>com.google.guava</groupId>
-	  <artifactId>guava</artifactId>
-	  <version>14.0.1</version>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+      <version>14.0.1</version>
     </dependency>
     <dependency>
       <groupId>org.antlr</groupId>
@@ -44,10 +46,14 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
             <configuration>
               <sources>
                 <source>src/main/java</source>
-                <source>src/test/java</source>
-                <source>src/resources/templates</source>
                 <source>target/generated</source>
               </sources>
+              <testResources>
+               <testResource>
+                <source>src/test/java</source>
+                <source>src/resources/templates</source>
+               </testResource>
+              </testResources>
             </configuration>
           </execution>
         </executions>

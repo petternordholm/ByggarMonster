@@ -7,6 +7,8 @@ Template: https://github.com/tomasbjerre/ByggarMonster/blob/master/app/src/resou
 
 Generated builders: https://github.com/tomasbjerre/ByggarMonster/tree/master/app/src/resources/templates/se/byggarmonster/test/simple
 
+Web demo is available at: http://byggarmonster.bjurr.se/
+
 This software will parse pure data objects, like:
 
     public class TwoFinalAttributesSrc {

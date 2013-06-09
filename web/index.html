@@ -19,6 +19,7 @@
 		Paste your Java code below.
 		</p>
         <textarea id="encodestring" class="clear code">
+package se.byggarmonster.sandbox;
 public class TwoFinalAttributesSrc {
     private final String myString;
 
@@ -37,59 +38,6 @@ public class TwoFinalAttributesSrc {
 	<div class="clear"></div>
 	
 	<div class="builders">
-		<div class="builder">
-			<textarea class="input code clear">
-public class TwoFinalAttributesSrc {
-    private final String myString;
-
-    public TwoFinalAttributesSrc(final String myString) {
-        this.myString = myString;
-    }
-
-    public int getMyInt() {
-        return myInt;
-    }
-}
-			</textarea>
-			<img src="spinner.gif" class="clear"/>
-		</div>
-		<div class="builder">
-			<textarea class="input code clear">
-public class TwoFinalAttributesSrc {
-    private final String myString;
-
-    public TwoFinalAttributesSrc(final String myString) {
-        this.myString = myString;
-    }
-
-    public int getMyInt() {
-        return myInt;
-    }
-}
-			</textarea>
-			<textarea class="output code clear">
-public class TwoFinalAttributesSrcBuilder {
-    private String myString;
-
-    public TwoFinalAttributesSrc build() {
-        TwoFinalAttributesSrc instance = new TwoFinalAttributesSrc(myString);
-        return instance;
-    }
-
-    public TwoFinalAttributesSrcBuilder from(final TwoFinalAttributesSrc from) {
-        TwoFinalAttributesSrcBuilder instance = new TwoFinalAttributesSrcBuilder();
-        instance.myString = from.getMyString();
-        return instance;
-    }
-
-    public TwoFinalAttributesSrcBuilder withMyString(final String myString) {
-        this.myString = myString;
-        return this;
-    }
-
-}
-			</textarea>
-		</div>
 	</div>
 </body>
 </html>

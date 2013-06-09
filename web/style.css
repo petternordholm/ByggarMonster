@@ -6,11 +6,12 @@ body {
 
 textarea {
     float: left;
+    border: 1px solid;
 }
 
 .code {
 	width: 700px;
-	height: 200px;
+	height: 400px;
 }
 
 .code.input {
