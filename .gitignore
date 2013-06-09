@@ -1,4 +1,4 @@
-/app/.classpath
-/app/.project
-/app/.settings/org.eclipse.jdt.groovy.core.prefs
-/app/target
+/lib/.classpath
+/lib/.project
+/lib/.settings/org.eclipse.jdt.groovy.core.prefs
+/lib/target
