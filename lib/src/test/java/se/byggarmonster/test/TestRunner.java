@@ -16,6 +16,7 @@ import se.byggarmonster.main.Main;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
+import com.google.common.io.BaseEncoding;
 import com.google.common.io.Files;
 
 public class TestRunner {
@@ -46,6 +47,11 @@ public class TestRunner {
 	};
 	public static final String SRC_JAVA = "Src.java";
 	public static final String SRC_TEST_RESOURCES = "src/resources/templates";
+
+	private String doMain(final String string) {
+		System.out.println("Testing: " + string);
+		return Main.doMain(string.split(" "));
+	}
 
 	public List<String> getAllFiles(final String folder, final String ending) {
 		final List<String> sourceFiles = new ArrayList<String>();
@@ -133,7 +139,6 @@ public class TestRunner {
 
 	private void testSourceFile(final String templateFile,
 	        final ResultInspector resultInspector, final String sourceFile) {
-		System.out.println("Testing " + sourceFile);
 		final String assertedFile = sourceFile.substring(0, sourceFile.length()
 		        - SRC_JAVA.length())
 		        + ASSERTED_JAVA;
@@ -165,23 +170,37 @@ public class TestRunner {
 
 	private String usingMain(final String source, final String template) {
 		/**
-		 * Use STDOUT
+		 * Use STDOUT and file input
 		 */
-		final String output = Main.doMain(("java " //
+		final String output = doMain("java " //
 		        + Main.PARAM_SOURCE + " " + source + " " //
 		        + Main.PARAM_TEMPLATE + " " + template + " " //
 		        + Main.PARAM_OUTPUT + " " + Main.OPTION_STDOUT //
-		        ).split(" "));
+		);
+
+		/**
+		 * Use STDOUT and base64 input
+		 */
+		final String outputBase64 = doMain("java " //
+		        + Main.PARAM_SOURCE
+		        + " "
+		        + (new String(BaseEncoding.base64().encode(
+		                getContentIfExists(source).get().getBytes()))) + " " //
+		        + Main.PARAM_TEMPLATE + " " + template + " " //
+		        + Main.PARAM_OUTPUT + " " + Main.OPTION_STDOUT //
+		);
+		assertEquals("Unexpected output using base64 as input.", output,
+		        outputBase64);
 
 		/**
 		 * Use file output
 		 */
 		final String tempFilePath = "tempfile.java";
-		final String fileStdout = Main.doMain(("java " //
+		final String fileStdout = doMain("java " //
 		        + Main.PARAM_SOURCE + " " + source + " " //
 		        + Main.PARAM_TEMPLATE + " " + template + " " //
 		        + Main.PARAM_OUTPUT + " " + tempFilePath //
-		        ).split(" "));
+		);
 		final String tempFileContent = getContentIfExists(tempFilePath).get();
 		new File(tempFilePath).delete();
 		assertEquals("Unexpected output using file creation option.", "Wrote "

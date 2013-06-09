@@ -8,12 +8,18 @@ import java.util.Map;
 
 import se.byggarmonster.lib.ByggarMonsterAPIBuilder;
 
+import com.google.common.io.BaseEncoding;
+
 public class Main {
 	public static final String OPTION_STDOUT = "stdout";
-	public static final String PARAM_OUTPUT = "-outputFolder";
+	public static final String PARAM_OUTPUT = "-output";
 	public static final String PARAM_PACKAGE = "-package";
 	public static final String PARAM_SOURCE = "-source";
 	public static final String PARAM_TEMPLATE = "-template";
+
+	private static String base64decode(final String source) {
+		return new String(BaseEncoding.base64().decode(source));
+	}
 
 	public static String doMain(final String[] args) {
 		final Params params = new Params(parsArgs(args));
@@ -32,9 +38,15 @@ public class Main {
 		        .withTemplateFile(templatePath);
 
 		if (params.get(PARAM_SOURCE).isPresent()) {
-			final String sourcePath = params.get(PARAM_SOURCE).get();
-			byggarMonsterAPIBuilder = byggarMonsterAPIBuilder
-			        .withSourceFile(sourcePath);
+			final String source = params.get(PARAM_SOURCE).get();
+			if (isBase64(source)) {
+				byggarMonsterAPIBuilder = byggarMonsterAPIBuilder
+				        .withSource(base64decode(source));
+			} else {
+				byggarMonsterAPIBuilder = byggarMonsterAPIBuilder
+				        .withSourceFile(source);
+			}
+
 			if (notStdout(params)) {
 				byggarMonsterAPIBuilder.toFile(params.get(PARAM_OUTPUT).get());
 				return "Wrote "
@@ -47,6 +59,15 @@ public class Main {
 		}
 
 		throw new RuntimeException("Did not understand input parameters.");
+	}
+
+	private static boolean isBase64(final String source) {
+		try {
+			base64decode(source);
+			return true;
+		} catch (final IllegalArgumentException e) {
+			return false;
+		}
 	}
 
 	public static void main(final String[] args) {
