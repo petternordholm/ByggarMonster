@@ -158,7 +158,10 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	public String render(final String templatePath) {
 		final ClassData classData = classDataBuilder.build();
 		final Map<String, Object> context = new HashMap<String, Object>();
-		context.put("packageName", checkNotNull(classData.getPackageName()));
+		context.put(
+		        "packageName",
+		        checkNotNull(classData.getPackageName(),
+		                "Package name was not parsed."));
 		context.put("className", checkNotNull(classData.getClassName()));
 		context.put("members", toListOfNameTypeMap(classData.getMembers()));
 		context.put("constructorParameters",
