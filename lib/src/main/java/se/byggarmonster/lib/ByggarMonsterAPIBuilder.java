@@ -47,7 +47,13 @@ public class ByggarMonsterAPIBuilder {
 
 	@Override
 	public String toString() {
-		return new ByggarMonsterAPI(source, template).toString();
+		try {
+			return new ByggarMonsterAPI(source, template).toString();
+		} catch (final Exception e) {
+			throw new RuntimeException(
+			        "Unable to generate string.\nTemplate:\n" + template
+			                + "\nSource:\n" + source, e);
+		}
 	}
 
 	public ByggarMonsterAPIBuilder withSource(final File file) {
