@@ -25,9 +25,9 @@ public class CompilationUnitBuilder {
 	}
 
 	public CompilationUnit build() {
-		return new CompilationUnit(className, packageName, constructorParameters,
-		        members, constructorMemberMapping, setterMapping,
-		        getterMapping, imports);
+		return new CompilationUnit(className, packageName,
+		        constructorParameters, members, constructorMemberMapping,
+		        setterMapping, getterMapping, imports);
 	}
 
 	public CompilationUnitBuilder withClassName(final String text) {
@@ -53,8 +53,9 @@ public class CompilationUnitBuilder {
 		return this;
 	}
 
-	public void withImport(final String text) {
+	public CompilationUnitBuilder withImport(final String text) {
 		imports.add(text);
+		return this;
 	}
 
 	public CompilationUnitBuilder withMember(final NameTypePair nameTypePair) {
