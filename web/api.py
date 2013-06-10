@@ -15,15 +15,14 @@ import commands
 cgitb.enable()
 
 ### CONTROLLER ###################
-input_base64 = cgi.FieldStorage().getvalue("input")
+input_base64 = base64.b64encode(base64.b64decode(cgi.FieldStorage().getvalue("input"))) #Validate
 if input_base64 != None:
     print("Content-Type: application/json;charset=utf-8")
     print("")
     print("")
-    base64.b64decode(input_base64) #Validate base64 before doing command below
     jar = "../lib/target/byggarmonster-0.1-SNAPSHOT-jar-with-dependencies.jar"
     template = "../lib/src/resources/templates/simple.txt"
-    command_string = "java -jar "+jar+" -source %s -output STDOUT -template %s" % (input_base64, template)
+    command_string = "java -jar "+jar+" -source \"%s\" -output STDOUT -template %s" % (input_base64, template)
     #print(command_string)
     output = commands.getstatusoutput(command_string)[1]
     print(json.dumps({"input":input_base64, "output":output}))
