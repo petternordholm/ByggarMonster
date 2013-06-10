@@ -3,9 +3,9 @@
 Name translates to Builder Pattern. This software will parse your POJO:s and create builders for them.
 
 ## Example ##
-Template: https://github.com/tomasbjerre/ByggarMonster/blob/master/app/src/resources/templates/simple.txt
+Template: https://github.com/tomasbjerre/ByggarMonster/blob/master/lib/src/resources/templates/simple.txt
 
-Generated builders: https://github.com/tomasbjerre/ByggarMonster/tree/master/app/src/resources/templates/se/byggarmonster/test/simple
+Generated builders: https://github.com/tomasbjerre/ByggarMonster/tree/master/lib/src/resources/templates/se/byggarmonster/test/simple
 
 Web demo is available at: http://byggarmonster.bjurr.se/
 
