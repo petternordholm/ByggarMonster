@@ -31,5 +31,7 @@ function allocate() {
  * Replace builder div with compiled code. Identified by encoded id.
  */
 function success(output) {
+ $(".builders img").first().parent().hide();
  $(".builders img").first().parent().html('<textarea class="output code clear">'+output+'</textarea>');
+ $(".builders textarea").first().parent().fadeIn();
 }
