@@ -18,11 +18,6 @@ public class ByggarMonsterAPIBuilder {
 		return file;
 	}
 
-	private File checkFileExists(final String filePath) {
-		final File file = new File(filePath);
-		return checkFileExists(file);
-	}
-
 	private String content(final File file) {
 		try {
 			return Files.toString(file, Charsets.UTF_8);
@@ -67,7 +62,7 @@ public class ByggarMonsterAPIBuilder {
 	}
 
 	public ByggarMonsterAPIBuilder withSourceFile(final String path) {
-		return withSource(content(checkFileExists(path)));
+		return withSource(new File(path));
 	}
 
 	public ByggarMonsterAPIBuilder withTemplate(final File file) {
@@ -81,6 +76,6 @@ public class ByggarMonsterAPIBuilder {
 	}
 
 	public ByggarMonsterAPIBuilder withTemplateFile(final String path) {
-		return withTemplate(content(checkFileExists(path)));
+		return withTemplate(new File(path));
 	}
 }

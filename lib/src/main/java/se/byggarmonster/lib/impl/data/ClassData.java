@@ -1,9 +1,7 @@
-package se.byggarmonster.lib.impl;
+package se.byggarmonster.lib.impl.data;
 
 import java.util.List;
 
-import se.byggarmonster.lib.impl.data.MemberMapping;
-import se.byggarmonster.lib.impl.data.MethodMapping;
 
 public class ClassData {
 	private final String className;

@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Optional;
 
-public class TemplateHelper {
+public class TemplateRenderer {
 	public static String render(String template,
 	        final Map<String, Object> context) {
 		template = renderVariables(template, context);

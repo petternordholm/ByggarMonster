@@ -1,12 +1,10 @@
-package se.byggarmonster.lib.impl;
+package se.byggarmonster.lib.impl.data;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import se.byggarmonster.lib.impl.data.MemberMapping;
-import se.byggarmonster.lib.impl.data.MethodMapping;
 
 public class ClassDataBuilder {
 	private String className;

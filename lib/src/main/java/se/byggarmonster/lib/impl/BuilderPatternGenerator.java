@@ -9,7 +9,10 @@ import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import se.byggarmonster.lib.impl.data.ClassData;
+import se.byggarmonster.lib.impl.data.ClassDataBuilder;
 import se.byggarmonster.lib.impl.data.MethodMapping;
+import se.byggarmonster.lib.impl.data.NameTypePair;
 import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaParser.BlockStatementContext;
 import se.byggarmonster.lib.parser.JavaParser.ConstructorBodyContext;
@@ -169,7 +172,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		                .getConstructorParameters())));
 		context.put("setters", toList(classData.getSetterMapping()));
 		context.put("getters", toList(classData.getGetterMapping()));
-		return TemplateHelper.render(templatePath, context);
+		return TemplateRenderer.render(templatePath, context);
 	}
 
 	private List<Map<String, Object>> toList(final MethodMapping map) {
