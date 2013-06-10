@@ -5,12 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-
 public class ClassDataBuilder {
 	private String className;
 	private final MemberMapping constructorMemberMapping;
 	private final LinkedList<NameTypePair> constructorParameters;
 	private final MethodMapping getterMapping;
+	private final List<String> imports;
 	private final List<NameTypePair> members;
 	private String packageName;
 	private final MethodMapping setterMapping;
@@ -21,11 +21,13 @@ public class ClassDataBuilder {
 		constructorMemberMapping = new MemberMapping();
 		setterMapping = new MethodMapping();
 		getterMapping = new MethodMapping();
+		imports = new ArrayList<String>();
 	}
 
 	public ClassData build() {
 		return new ClassData(className, packageName, constructorParameters,
-		        members, constructorMemberMapping, setterMapping, getterMapping);
+		        members, constructorMemberMapping, setterMapping,
+		        getterMapping, imports);
 	}
 
 	public ClassDataBuilder withClassName(final String text) {
@@ -49,6 +51,10 @@ public class ClassDataBuilder {
 	        final String string) {
 		getterMapping.include(text, string);
 		return this;
+	}
+
+	public void withImport(final String text) {
+		imports.add(text);
 	}
 
 	public ClassDataBuilder withMember(final NameTypePair nameTypePair) {

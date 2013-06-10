@@ -1,5 +1,6 @@
 package se.byggarmonster.test.simple;
 
+
 public class TwoFinalAttributesDifferentOrderedAttributesInConstructorSrcBuilder {
     private int myInt;
     private String myString;

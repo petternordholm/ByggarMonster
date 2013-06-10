@@ -1,5 +1,7 @@
 package ${packageName};
 
+{EACH imports}import ${it};
+{/EACH}
 public class ${className}Builder {
 {EACH members}    private ${type} ${name};
 {/EACH}

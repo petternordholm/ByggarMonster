@@ -20,11 +20,12 @@ import se.byggarmonster.lib.parser.JavaParser.ConstructorDeclaratorRestContext;
 import se.byggarmonster.lib.parser.JavaParser.ExpressionContext;
 import se.byggarmonster.lib.parser.JavaParser.FieldDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsContext;
+import se.byggarmonster.lib.parser.JavaParser.ImportDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.MemberDeclContext;
 import se.byggarmonster.lib.parser.JavaParser.MemberDeclarationContext;
 import se.byggarmonster.lib.parser.JavaParser.MethodBodyContext;
 import se.byggarmonster.lib.parser.JavaParser.NormalClassDeclarationContext;
-import se.byggarmonster.lib.parser.JavaParser.QualifiedNameContext;
+import se.byggarmonster.lib.parser.JavaParser.PackageDeclarationContext;
 
 import com.google.common.base.Optional;
 
@@ -49,6 +50,11 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 			        .variableDeclaratorId().getText(),
 			        ((FormalParameterDeclsContext) ctx.getParent()).type()
 			                .getText()));
+	}
+
+	@Override
+	public void exitImportDeclaration(final ImportDeclarationContext ctx) {
+		classDataBuilder.withImport(ctx.qualifiedName().getText());
 	}
 
 	@Override
@@ -89,12 +95,9 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		classDataBuilder.withClassName(ctx.Identifier().getText());
 	}
 
-	/**
-	 * package name
-	 */
 	@Override
-	public void exitQualifiedName(final QualifiedNameContext ctx) {
-		classDataBuilder.withPackageName(ctx.getText());
+	public void exitPackageDeclaration(final PackageDeclarationContext ctx) {
+		classDataBuilder.withPackageName(ctx.qualifiedName().getText());
 	}
 
 	private Map<String, String> findMemberMappingsInBlocks(
@@ -172,7 +175,18 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		                .getConstructorParameters())));
 		context.put("setters", toList(classData.getSetterMapping()));
 		context.put("getters", toList(classData.getGetterMapping()));
+		context.put("imports", toList(classData.getImports()));
 		return TemplateRenderer.render(templatePath, context);
+	}
+
+	private List<Map<String, String>> toList(final List<String> imports) {
+		final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+		for (final String s : imports) {
+			final HashMap<String, String> map = new HashMap<String, String>();
+			map.put("it", s);
+			list.add(map);
+		}
+		return list;
 	}
 
 	private List<Map<String, Object>> toList(final MethodMapping map) {

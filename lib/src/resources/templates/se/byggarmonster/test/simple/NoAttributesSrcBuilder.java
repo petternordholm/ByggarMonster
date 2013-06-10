@@ -1,5 +1,6 @@
 package se.byggarmonster.test.simple;
 
+
 public class NoAttributesSrcBuilder {
 
     public NoAttributesSrc build() {

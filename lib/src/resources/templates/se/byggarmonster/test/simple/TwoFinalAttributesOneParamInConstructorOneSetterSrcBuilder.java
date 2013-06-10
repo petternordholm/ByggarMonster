@@ -1,5 +1,6 @@
 package se.byggarmonster.test.simple;
 
+
 public class TwoFinalAttributesOneParamInConstructorOneSetterSrcBuilder {
     private int myInt;
     private String myString;
