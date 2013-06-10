@@ -1,4 +1,4 @@
-package se.byggarmonster.lib.impl.data;
+package se.byggarmonster.lib.compilationunit;
 
 public class NameTypePair {
 	private final String name;

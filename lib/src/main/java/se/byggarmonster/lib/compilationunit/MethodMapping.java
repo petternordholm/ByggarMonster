@@ -1,4 +1,4 @@
-package se.byggarmonster.lib.impl.data;
+package se.byggarmonster.lib.compilationunit;
 
 import java.util.ArrayList;
 import java.util.HashMap;

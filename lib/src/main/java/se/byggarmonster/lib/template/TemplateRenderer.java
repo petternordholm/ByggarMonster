@@ -1,4 +1,4 @@
-package se.byggarmonster.lib.impl;
+package se.byggarmonster.lib.template;
 
 import static java.util.regex.Matcher.quoteReplacement;
 

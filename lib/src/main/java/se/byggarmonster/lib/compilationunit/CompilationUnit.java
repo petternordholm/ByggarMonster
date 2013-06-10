@@ -1,8 +1,8 @@
-package se.byggarmonster.lib.impl.data;
+package se.byggarmonster.lib.compilationunit;
 
 import java.util.List;
 
-public class ClassData {
+public class CompilationUnit {
 	private final String className;
 	private final MemberMapping constructorMemberMapping;
 	private final List<NameTypePair> constructorParameters;
@@ -12,7 +12,7 @@ public class ClassData {
 	private final String packageName;
 	private final MethodMapping setterMapping;
 
-	public ClassData(final String className, final String packageName,
+	public CompilationUnit(final String className, final String packageName,
 	        final List<NameTypePair> constructorParameters,
 	        final List<NameTypePair> members,
 	        final MemberMapping constructorMemberMapping,

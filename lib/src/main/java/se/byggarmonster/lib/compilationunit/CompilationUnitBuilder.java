@@ -1,11 +1,11 @@
-package se.byggarmonster.lib.impl.data;
+package se.byggarmonster.lib.compilationunit;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-public class ClassDataBuilder {
+public class CompilationUnitBuilder {
 	private String className;
 	private final MemberMapping constructorMemberMapping;
 	private final LinkedList<NameTypePair> constructorParameters;
@@ -15,7 +15,7 @@ public class ClassDataBuilder {
 	private String packageName;
 	private final MethodMapping setterMapping;
 
-	public ClassDataBuilder() {
+	public CompilationUnitBuilder() {
 		constructorParameters = new LinkedList<NameTypePair>();
 		members = new ArrayList<NameTypePair>();
 		constructorMemberMapping = new MemberMapping();
@@ -24,30 +24,30 @@ public class ClassDataBuilder {
 		imports = new ArrayList<String>();
 	}
 
-	public ClassData build() {
-		return new ClassData(className, packageName, constructorParameters,
+	public CompilationUnit build() {
+		return new CompilationUnit(className, packageName, constructorParameters,
 		        members, constructorMemberMapping, setterMapping,
 		        getterMapping, imports);
 	}
 
-	public ClassDataBuilder withClassName(final String text) {
+	public CompilationUnitBuilder withClassName(final String text) {
 		this.className = text;
 		return this;
 	}
 
-	public ClassDataBuilder withConstructorMemberMappings(
+	public CompilationUnitBuilder withConstructorMemberMappings(
 	        final Map<String, String> foundMappings) {
 		constructorMemberMapping.include(foundMappings);
 		return this;
 	}
 
-	public ClassDataBuilder withConstructorParameter(
+	public CompilationUnitBuilder withConstructorParameter(
 	        final NameTypePair nameTypePair) {
 		constructorParameters.addFirst(nameTypePair);
 		return this;
 	}
 
-	public ClassDataBuilder withGetterMapping(final String text,
+	public CompilationUnitBuilder withGetterMapping(final String text,
 	        final String string) {
 		getterMapping.include(text, string);
 		return this;
@@ -57,17 +57,17 @@ public class ClassDataBuilder {
 		imports.add(text);
 	}
 
-	public ClassDataBuilder withMember(final NameTypePair nameTypePair) {
+	public CompilationUnitBuilder withMember(final NameTypePair nameTypePair) {
 		this.members.add(nameTypePair);
 		return this;
 	}
 
-	public ClassDataBuilder withPackageName(final String text) {
+	public CompilationUnitBuilder withPackageName(final String text) {
 		this.packageName = text;
 		return this;
 	}
 
-	public ClassDataBuilder withSetterMapping(final String text,
+	public CompilationUnitBuilder withSetterMapping(final String text,
 	        final String name) {
 		setterMapping.include(text, name);
 		return this;

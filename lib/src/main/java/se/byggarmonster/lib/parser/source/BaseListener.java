@@ -1,18 +1,14 @@
-package se.byggarmonster.lib.impl;
+package se.byggarmonster.lib.parser.source;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
-import se.byggarmonster.lib.impl.data.ClassData;
-import se.byggarmonster.lib.impl.data.ClassDataBuilder;
-import se.byggarmonster.lib.impl.data.MethodMapping;
-import se.byggarmonster.lib.impl.data.NameTypePair;
+import se.byggarmonster.lib.compilationunit.CompilationUnit;
+import se.byggarmonster.lib.compilationunit.CompilationUnitBuilder;
+import se.byggarmonster.lib.compilationunit.NameTypePair;
 import se.byggarmonster.lib.parser.JavaBaseListener;
 import se.byggarmonster.lib.parser.JavaParser.BlockStatementContext;
 import se.byggarmonster.lib.parser.JavaParser.ConstructorBodyContext;
@@ -29,12 +25,12 @@ import se.byggarmonster.lib.parser.JavaParser.PackageDeclarationContext;
 
 import com.google.common.base.Optional;
 
-public class BuilderPatternGenerator extends JavaBaseListener {
-	private final ClassDataBuilder classDataBuilder = new ClassDataBuilder();
+public class BaseListener extends JavaBaseListener {
+	private final CompilationUnitBuilder compilationUnitBuilder = new CompilationUnitBuilder();
 
 	@Override
 	public void exitConstructorBody(final ConstructorBodyContext ctx) {
-		classDataBuilder
+		compilationUnitBuilder
 		        .withConstructorMemberMappings(findMemberMappingsInBlocks(ctx
 		                .blockStatement()));
 	}
@@ -46,15 +42,15 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 	public void exitFormalParameterDeclsRest(
 	        final se.byggarmonster.lib.parser.JavaParser.FormalParameterDeclsRestContext ctx) {
 		if (hasParent(ctx, ConstructorDeclaratorRestContext.class))
-			classDataBuilder.withConstructorParameter(new NameTypePair(ctx
-			        .variableDeclaratorId().getText(),
+			compilationUnitBuilder.withConstructorParameter(new NameTypePair(
+			        ctx.variableDeclaratorId().getText(),
 			        ((FormalParameterDeclsContext) ctx.getParent()).type()
 			                .getText()));
 	}
 
 	@Override
 	public void exitImportDeclaration(final ImportDeclarationContext ctx) {
-		classDataBuilder.withImport(ctx.qualifiedName().getText());
+		compilationUnitBuilder.withImport(ctx.qualifiedName().getText());
 	}
 
 	@Override
@@ -62,7 +58,7 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		if (mdc.getChild(1) instanceof FieldDeclarationContext) {
 			final FieldDeclarationContext fieldDeclarationContext = (FieldDeclarationContext) mdc
 			        .getChild(1);
-			classDataBuilder.withMember(new NameTypePair(
+			compilationUnitBuilder.withMember(new NameTypePair(
 			        fieldDeclarationContext.variableDeclarators().getText(),
 			        mdc.type().getText()));
 		}
@@ -75,8 +71,8 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		if (foundMappings.size() == 1) {
 			final MemberDeclContext memberDeclContext = (MemberDeclContext) ctx
 			        .getParent().getParent();
-			classDataBuilder.withSetterMapping(memberDeclContext.Identifier()
-			        .getText(),
+			compilationUnitBuilder.withSetterMapping(memberDeclContext
+			        .Identifier().getText(),
 			        getMember(foundMappings.values().iterator().next())
 			                .getName());
 		}
@@ -84,20 +80,20 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		final Optional<String> returnMember = findReturnInBlocks(ctx.block()
 		        .blockStatement());
 		if (returnMember.isPresent()) {
-			classDataBuilder.withGetterMapping(ctx.getParent().getParent()
-			        .getChild(0).getText(), returnMember.get());
+			compilationUnitBuilder.withGetterMapping(ctx.getParent()
+			        .getParent().getChild(0).getText(), returnMember.get());
 		}
 	}
 
 	@Override
 	public void exitNormalClassDeclaration(
 	        final NormalClassDeclarationContext ctx) {
-		classDataBuilder.withClassName(ctx.Identifier().getText());
+		compilationUnitBuilder.withClassName(ctx.Identifier().getText());
 	}
 
 	@Override
 	public void exitPackageDeclaration(final PackageDeclarationContext ctx) {
-		classDataBuilder.withPackageName(ctx.qualifiedName().getText());
+		compilationUnitBuilder.withPackageName(ctx.qualifiedName().getText());
 	}
 
 	private Map<String, String> findMemberMappingsInBlocks(
@@ -126,8 +122,12 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return Optional.absent();
 	}
 
+	public CompilationUnit getCompilationUnit() {
+		return compilationUnitBuilder.build();
+	}
+
 	private NameTypePair getMember(final String name) {
-		for (final NameTypePair p : classDataBuilder.build().getMembers())
+		for (final NameTypePair p : compilationUnitBuilder.build().getMembers())
 			if (p.getName().equals(name))
 				return p;
 		throw new RuntimeException(name + " not found");
@@ -141,79 +141,9 @@ public class BuilderPatternGenerator extends JavaBaseListener {
 		return hasParent(ctx.getParent(), clazz);
 	}
 
-	private List<NameTypePair> mapToMembers(final List<NameTypePair> pairs) {
-		final List<NameTypePair> mapped = new ArrayList<NameTypePair>();
-		for (final NameTypePair constructorParameter : pairs) {
-			new HashMap<String, Object>();
-			mapped.add(new NameTypePair(checkNotNull(
-			        classDataBuilder.build().getConstructorMemberMapping()
-			                .getAttribute(constructorParameter.getName()),
-			        constructorParameter.getName() + " has no memberMapping"),
-			        checkNotNull(constructorParameter.getType(),
-			                constructorParameter.getName() + " has null type")));
-		}
-		return mapped;
-	}
-
 	private String removeThis(final String text) {
 		if (!text.startsWith("this."))
 			return text;
 		return text.substring("this.".length());
 	}
-
-	public String render(final String templatePath) {
-		final ClassData classData = classDataBuilder.build();
-		final Map<String, Object> context = new HashMap<String, Object>();
-		context.put(
-		        "packageName",
-		        checkNotNull(classData.getPackageName(),
-		                "Package name was not parsed."));
-		context.put("className", checkNotNull(classData.getClassName()));
-		context.put("members", toListOfNameTypeMap(classData.getMembers()));
-		context.put("constructorParameters",
-		        toListOfNameTypeMap(mapToMembers(classData
-		                .getConstructorParameters())));
-		context.put("setters", toList(classData.getSetterMapping()));
-		context.put("getters", toList(classData.getGetterMapping()));
-		context.put("imports", toList(classData.getImports()));
-		return TemplateRenderer.render(templatePath, context);
-	}
-
-	private List<Map<String, String>> toList(final List<String> imports) {
-		final List<Map<String, String>> list = new ArrayList<Map<String, String>>();
-		for (final String s : imports) {
-			final HashMap<String, String> map = new HashMap<String, String>();
-			map.put("it", s);
-			list.add(map);
-		}
-		return list;
-	}
-
-	private List<Map<String, Object>> toList(final MethodMapping map) {
-		final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
-		for (final String key : map.getMethods()) {
-			final Map<String, Object> variables = new HashMap<String, Object>();
-			variables.put("key", key);
-			variables.put("value", map.getAttribute(key));
-			list.add(variables);
-		}
-		return list;
-	}
-
-	private List<Map<String, Object>> toListOfNameTypeMap(
-	        final List<NameTypePair> list) {
-		final ArrayList<Map<String, Object>> constructorParameters = new ArrayList<Map<String, Object>>();
-		for (final NameTypePair constructorParameter : list) {
-			final Map<String, Object> map = new HashMap<String, Object>();
-			map.put("name",
-			        checkNotNull(constructorParameter.getName(),
-			                constructorParameter.getName() + " is null"));
-			map.put("type",
-			        checkNotNull(constructorParameter.getType(),
-			                constructorParameter.getName() + " has null type"));
-			constructorParameters.add(map);
-		}
-		return constructorParameters;
-	}
-
 }
