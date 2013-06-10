@@ -10,12 +10,13 @@ import re
 import sys
 import base64
 import commands
+import pipes
 
 ### CONFIG #######################
 cgitb.enable()
 
 ### CONTROLLER ###################
-input_base64 = base64.b64encode(base64.b64decode(cgi.FieldStorage().getvalue("input"))) #Validate
+input_base64 = pipes.quote(base64.b64encode(base64.b64decode(cgi.FieldStorage().getvalue("input")))) #Validate
 if input_base64 != None:
     print("Content-Type: application/json;charset=utf-8")
     print("")
